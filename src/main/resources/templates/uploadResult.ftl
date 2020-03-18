@@ -5,4 +5,5 @@
 
     <@navigation.navig/>
 
+    <div>${result}</div>
 </@common.page>
