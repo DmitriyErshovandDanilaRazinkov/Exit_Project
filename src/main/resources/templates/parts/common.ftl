@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>DmusicD</title>
 </head>
 <body>
 <#nested>

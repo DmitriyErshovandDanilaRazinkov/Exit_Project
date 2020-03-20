@@ -6,25 +6,22 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+
+
 @Data
 @Entity
-public class Audio {
-
+public class User {
     private @Id @GeneratedValue Long id;
 
     private String name;
 
-    private String fileName;
+    private UserTypes userType;
 
-    private String tag;
+    public User(){}
 
-    public Audio() {}
-
-    public Audio(String name,  String tag, String fileName){
+    public User(String name, UserTypes userType){
         this.name = name;
-        this.tag = tag;
-        this.fileName = fileName;
+        this.userType = userType;
     }
+
 }
-
-
