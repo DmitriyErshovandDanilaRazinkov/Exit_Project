@@ -1,9 +1,6 @@
-<#import "parts/common.ftl" as common>
-<#import "parts/navigation.ftl" as navigation>
+<#import "../parts/common.ftl" as common>
 
 <@common.page>
-
-    <@navigation.navig/>
 
     <form method="post" enctype="multipart/form-data">
         <div>
@@ -19,4 +16,5 @@
             <button type="submit"> Upload </button>
         </div>
     </form>
+
 </@common.page>

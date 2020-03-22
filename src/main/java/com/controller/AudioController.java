@@ -1,5 +1,5 @@
 package com.controller;
-//я здесь был
+
 import com.repository.AudioRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,11 +15,13 @@ public class AudioController {
         this.repository = repository;
     }
 
-    @GetMapping("/audio")
+    @GetMapping("/audios")
     public String getAllAudio(Map<String, Object> model){
 
         model.put("audios", repository.findAll());
 
-        return "listAudios";
+        return "audios/listAudios";
     }
+
+
 }

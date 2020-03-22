@@ -8,23 +8,19 @@ import javax.persistence.Id;
 
 @Data
 @Entity
-public class Audio {
+public class FileAud {
+
 
     private @Id @GeneratedValue Long id;
 
     private String name;
 
-    private Long fileId;
+    private String originalName;
 
-    private String tag;
+    public FileAud(){}
 
-    public Audio() {}
-
-    public Audio(String name,  String tag, Long fileId){
+    public FileAud(String name, String originalName) {
         this.name = name;
-        this.tag = tag;
-        this.fileId = fileId;
+        this.originalName = originalName;
     }
 }
-
-

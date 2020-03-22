@@ -1,15 +1,14 @@
-<#import "parts/common.ftl" as common>
-<#import "parts/navigation.ftl" as navigation>
-<@common.page>
+<#import "../parts/common.ftl" as common>
 
-    <@navigation.navig/>
+<@common.page>
 
     <#list audios as audio>
         <div>
             <b>${audio.getId()}</b>
             <span>${audio.getName()}</span>
             <span>${audio.getTag()}</span>
-            <span>${audio.getFileName()}</span>
+            <span>${audio.getFileId()}</span>
         </div>
     </#list>
+
 </@common.page>
