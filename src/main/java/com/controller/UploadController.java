@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,6 +19,7 @@ import java.util.Map;
 import static java.util.UUID.randomUUID;
 
 @Controller
+@RequestMapping("/upload")
 public class UploadController {
 
     @Value("${upload.path}")
@@ -31,12 +33,12 @@ public class UploadController {
         this.fileRepository = fileRepository;
     }
 
-    @GetMapping("/upload/audio")
+    @GetMapping("/audio")
     public String uploadAudioForm () {
         return "uploadForm/uploadAudio";
     }
 
-    @PostMapping("/upload/audio")
+    @PostMapping("/audio")
     public String uploadAudio(@RequestParam String name, @RequestParam String tag,
                               @RequestParam("file") MultipartFile file, Map<String, Object> model) throws IOException {
 
@@ -45,12 +47,12 @@ public class UploadController {
         return "uploadForm/uploadResult";
     }
 
-    @GetMapping("/upload/file")
+    @GetMapping("/file")
     public String uploadFileForm () {
         return "uploadForm/uploadFile";
     }
 
-    @PostMapping("/upload/file")
+    @PostMapping("/file")
     public String uploadFile(@RequestParam("file")MultipartFile file, Map<String, Object> model) throws IOException {
         if(uploadFile(file) != -1) {
             model.put("result", "File upload");
@@ -68,7 +70,7 @@ public class UploadController {
             File uploadDir = new File(uploadPath);
 
             if (!uploadDir.exists()) {
-                uploadDir.mkdir();
+                uploadDir.mkdirs();
             }
 
             String uuidFile = randomUUID().toString();
