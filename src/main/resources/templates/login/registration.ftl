@@ -1,4 +1,4 @@
-<#assign form=JspTaglibs["http://www.springframework.org/tags/form"] />
+<#import "/spring.ftl" as spring />
 
 <!DOCTYPE html>
 <html>
@@ -9,25 +9,27 @@
 
 <body>
 <div>
-    <@form.form method="POST" modelAttribute="userForm">
-        <h2>Регистрация</h2>
-        <div>
-            <@form.input type="text" path="username" placeholder="Username"
-                        autofocus="true"></form.input>
-            <@form.errors path="username"></form.errors>
+    <@spring.bind "userForm"/>
+    <h2>Регистрация</h2>
+    <div>
+        <@input path="username" type="text" placeholder="Username" autofocus="true"/>
+        <@spring.showErrors ' ', 'errors'>
             ${usernameError}
-        </div>
-        <div>
-            <@form.input type="password" path="password" placeholder="Password"></form.input>
-        </div>
-        <div>
-            <@form.input type="password" path="passwordConfirm"
-                        placeholder="Confirm your password"></form.input>
-            <@form.errors path="password"></form.errors>
+        </@spring.showErrors>
+    </div>
+    <div>
+        <@spring.formInput 'settings.password','type="password"  placeholder="Password"'></@spring.formInput>
+    </div>
+    <div>
+        <@spring.formInput 'settings.passwordConfirm','type="password"
+                        placeholder="Confirm your password"'></@spring.formInput>
+        <@spring.showErrors ' ', 'errors'>
             ${passwordError}
-        </div>
-        <button type="submit">Зарегистрироваться</button>
-    </form.form>
+        </@spring.showErrors>
+    </div>
+    <button type="submit">Зарегистрироваться</button>
+    <@spring.showErrors ' ', 'errors'/>
+
     <a href="/">Главная</a>
 </div>
 </body>

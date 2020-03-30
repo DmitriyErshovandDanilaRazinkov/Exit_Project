@@ -41,9 +41,13 @@ public class UploadController {
     @PostMapping("/audio")
     public String uploadAudio(@RequestParam String name, @RequestParam String tag,
                               @RequestParam("file") MultipartFile file, Map<String, Object> model) throws IOException {
+        if (file.getContentType().equals("audio/mp3")) {
+            audioRepository.save(new Audio(name, tag, uploadFile(file)));
 
-        audioRepository.save(new Audio(name, tag, uploadFile(file)));
-        model.put("result", "Audio upload");
+            model.put("result", "Audio upload");
+        } else {
+            model.put("result", "This file is't audio" + file.getContentType());
+        }
         return "uploadForm/uploadResult";
     }
 
@@ -67,6 +71,7 @@ public class UploadController {
 
     public Long uploadFile(MultipartFile file) throws IOException {
         if(file != null) {
+
             File uploadDir = new File(uploadPath);
 
             if (!uploadDir.exists()) {

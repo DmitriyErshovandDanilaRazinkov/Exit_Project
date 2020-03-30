@@ -1,5 +1,6 @@
 package com.controller;
 
+//http://maruhgar.blogspot.com/2011/01/converting-from-jsp-to-freemarker.html
 import com.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

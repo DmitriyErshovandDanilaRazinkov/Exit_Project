@@ -1,39 +1,38 @@
-<#assign c=JspTaglibs["http://java.sun.com/jsp/jstl/core"] />
-
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
     <title>Log in with your account</title>
-    <link rel="stylesheet" type="text/css" href="${contextPath}/resources/css/style.css">
 </head>
 
 <body>
 <div>
     <table>
         <thead>
-        <th>ID</th>
-        <th>UserName</th>
-        <th>Password</th>
-        <th>Roles</th>
+        <tr>
+            <td>ID</td>
+            <td>UserName</td>
+            <td>Password</td>
+            <td>Roles</td>
+        </tr>
         </thead>
-        <@c.forEach items="${allUsers}" var="user">
+        <#list user as user>
             <tr>
                 <td>${user.id}</td>
                 <td>${user.username}</td>
                 <td>${user.password}</td>
                 <td>
-                    <@c.forEach items="${user.roles}" var="role">${role.name}; </@c.forEach>
+                    <#list user.roles as role> ${role.name}; </#list>
                 </td>
                 <td>
-                    <form action="${pageContext.request.contextPath}/admin" method="post">
+                    <form action="/admin" method="post">
                         <input type="hidden" name="userId" value="${user.id}"/>
                         <input type="hidden" name="action" value="delete"/>
                         <button type="submit">Delete</button>
                     </form>
                 </td>
             </tr>
-        </@c.forEach>
+        </#list>
     </table>
     <a href="/">Главная</a>
 </div>
