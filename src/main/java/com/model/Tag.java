@@ -1,10 +1,8 @@
 package com.model;
 
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -12,9 +10,10 @@ import java.util.Set;
 @ApiModel
 @Entity
 @Data
-public class Role implements GrantedAuthority {
+public class Tag {
     @ApiModelProperty
     @Id
+    @GeneratedValue
     private Long id;
 
     @ApiModelProperty
@@ -22,23 +21,19 @@ public class Role implements GrantedAuthority {
 
     @ApiModelProperty
     @Transient
-    @ManyToMany(mappedBy = "roles")
-    private Set<User> users;
+    @ManyToMany(mappedBy = "tags")
+    private Set<Audio> audios;
 
-    public Role() {
+    public Tag() {
     }
 
-    public Role(Long id) {
-        this.id = id;
-    }
-
-    public Role(Long id, String name) {
-        this.id = id;
+    public Tag(String name) {
         this.name = name;
     }
 
-    @Override
-    public String getAuthority() {
-        return getName();
+
+    public Tag(Long id, String name) {
+        this.id = id;
+        this.name = name;
     }
 }

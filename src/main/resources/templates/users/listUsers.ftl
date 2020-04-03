@@ -1,14 +1,33 @@
-<#import "../parts/common.ftl" as common>
+<#import "../parts/admincommon.ftl" as common>
 
 <@common.page>
 
-
-    <#list users as user>
-        <div>
-            <b>${user.getId()}</b>
-            <span>${user.getName()}</span>
-            <span>${user.getUserType}</span>
-        </div>
-    </#list>
+    <table>
+        <thead>
+        <tr>
+            <td>ID</td>
+            <td>UserName</td>
+            <td>Password</td>
+            <td>Roles</td>
+        </tr>
+        </thead>
+        <#list allUsers as user>
+            <tr>
+                <td>${user.id}</td>
+                <td>${user.username}</td>
+                <td>${user.password}</td>
+                <td>
+                    <#list user.roles as role> ${role.name}; </#list>
+                </td>
+                <td>
+                    <form action="/admin/users" method="post">
+                        <input type="hidden" name="userId" value="${user.id}"/>
+                        <input type="hidden" name="action" value="delete"/>
+                        <button type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        </#list>
+    </table>
 
 </@common.page>

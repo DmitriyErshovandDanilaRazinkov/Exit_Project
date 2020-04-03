@@ -41,6 +41,6 @@ public class RegistrationController {
             return "login/registration";
         }
 
-        return "redirect:/";
+        return "mainPage";
     }
 }

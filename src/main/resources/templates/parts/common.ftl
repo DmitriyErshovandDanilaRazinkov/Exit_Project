@@ -23,14 +23,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/">Home</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/files"> List File </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/audios"> List Audio </a>
-                    </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Upload
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
@@ -40,17 +35,26 @@
                     </li>
                 </ul>
             </div>
+            <@sec.authorize access="!isAuthenticated()">
+                <div class="btn btn-success mr-sm-2">
+                    <a href="/login">Войти</a>
+                    <a href="/registration">Зарегистрироваться</a>
+                </div>
+            </@sec.authorize>
+            <@sec.authorize access="isAuthenticated()">
+                <div class="btn btn-outline-success">
+                    <a href="/logout">Выйти</a>
+                </div>
+            </@sec.authorize>
+            <@sec.authorize access="hasRole('ROLE_ADMIN')">
+                <div>
+                    <a href="/admin">Admin</a>
+                </div>
+            </@sec.authorize>
         </nav>
+
     </header>
 
-
-    <@sec.authorize access="!isAuthenticated()">
-        <h4><a href="/login">Войти</a></h4>
-        <h4><a href="/registration">Зарегистрироваться</a></h4>
-    </@sec.authorize>
-    <@sec.authorize access="isAuthenticated()">
-        <h4><a href="/logout">Выйти</a></h4>
-    </@sec.authorize>
 
     <#nested>
 

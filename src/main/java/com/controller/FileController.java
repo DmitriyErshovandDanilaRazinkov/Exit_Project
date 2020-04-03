@@ -1,30 +1,44 @@
 package com.controller;
 
-import com.repository.FileRepository;
-import org.springframework.beans.factory.annotation.Value;
+import com.model.FileAud;
+import com.service.FileService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
-import java.util.Map;
+import java.util.List;
 
+@Api
 @Controller
 public class FileController {
 
-    @Value("${upload.path}")
-    private String uploadPath;
+    private FileService service;
 
-    private FileRepository repository;
-
-    public FileController(FileRepository repository) {
-        this.repository = repository;
+    public FileController(FileService service) {
+        this.service = service;
     }
 
+    @ApiOperation("Получение списка файлов")
     @GetMapping("/files")
-    public String getAllAudio(Map<String, Object> model){
+    public ResponseEntity<List<FileAud>> getAllFiles() {
+        return ResponseEntity.ok(service.getAll());
+    }
 
-        model.put("files", repository.findAll());
+    @ApiOperation("Получение файла по id")
+    @GetMapping("/files/{id}")
+    public ResponseEntity<FileAud> getFile(@PathVariable long id) {
+        return ResponseEntity.ok(service.foundFileById(id));
+    }
 
-        return "files/listFiles1";
+    @ApiOperation("Удаление файла")
+    @DeleteMapping("/files/{id}")
+    public ResponseEntity<?> deleteFile(@PathVariable long id) {
+        service.deleteFile(id);
+        return ResponseEntity.ok().build();
     }
 
 }

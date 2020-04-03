@@ -9,25 +9,26 @@
 
 <body>
 <div>
-    <@spring.bind "userForm"/>
-    <h2>Регистрация</h2>
-    <div>
-        <@input path="username" type="text" placeholder="Username" autofocus="true"/>
-        <@spring.showErrors ' ', 'errors'>
-            ${usernameError}
-        </@spring.showErrors>
-    </div>
-    <div>
-        <@spring.formInput 'settings.password','type="password"  placeholder="Password"'></@spring.formInput>
-    </div>
-    <div>
-        <@spring.formInput 'settings.passwordConfirm','type="password"
-                        placeholder="Confirm your password"'></@spring.formInput>
-        <@spring.showErrors ' ', 'errors'>
-            ${passwordError}
-        </@spring.showErrors>
-    </div>
-    <button type="submit">Зарегистрироваться</button>
+    <form method="post" enctype="multipart/form-data">
+        <h2>Регистрация</h2>
+        <div>
+            <@spring.formInput path="userForm.username" fieldType="text" attributes='placeholder="Username" autofocus="true"'></@spring.formInput>
+            <@spring.showErrors ' ', 'errors'>
+                ${usernameError}
+            </@spring.showErrors>
+        </div>
+        <div>
+            <@spring.formInput path="userForm.password" fieldType="password" attributes='placeholder="Password"'></@spring.formInput>
+        </div>
+        <div>
+            <@spring.formInput path="userForm.passwordConfirm" fieldType="password"
+            attributes='placeholder="Confirm your password"'></@spring.formInput>
+            <@spring.showErrors ' ', 'errors'>
+                ${passwordError}
+            </@spring.showErrors>
+        </div>
+        <button type="submit">Зарегистрироваться</button>
+    </form>
     <@spring.showErrors ' ', 'errors'/>
 
     <a href="/">Главная</a>

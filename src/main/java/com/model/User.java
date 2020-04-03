@@ -1,5 +1,7 @@
 package com.model;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,30 +12,31 @@ import java.util.Collection;
 import java.util.Set;
 
 
+@ApiModel
 @Data
 @Entity
 public class User implements UserDetails {
+
+    @ApiModelProperty
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long id;
+
+    @ApiModelProperty
     @Size(min = 2, message = "Не меньше 5 знаков")
     private String username;
+
+    @ApiModelProperty
     @Size(min = 2, message = "Не меньше 5 знаков")
     private String password;
     @Transient
     private String passwordConfirm;
+
+    @ApiModelProperty
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> roles;
 
     public User() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     @Override
@@ -61,10 +64,6 @@ public class User implements UserDetails {
         return true;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return getRoles();
@@ -73,25 +72,5 @@ public class User implements UserDetails {
     @Override
     public String getPassword() {
         return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getPasswordConfirm() {
-        return passwordConfirm;
-    }
-
-    public void setPasswordConfirm(String passwordConfirm) {
-        this.passwordConfirm = passwordConfirm;
-    }
-
-    public Set<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
     }
 }
