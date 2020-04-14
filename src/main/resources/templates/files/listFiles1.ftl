@@ -19,12 +19,15 @@
                     <form action="/admin/files" method="post">
                         <input type="hidden" name="fileId" value="${file.id}"/>
                         <input type="hidden" name="action" value="delete"/>
+                        <a href="/admin/download/{file.name}">скачать</a>
                         <button type="submit">Delete</button>
                     </form>
                 </td>
+
             </tr>
         </#list>
     </table>
 
 
 </@common.page>
+

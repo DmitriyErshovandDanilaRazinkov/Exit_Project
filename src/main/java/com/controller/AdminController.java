@@ -79,9 +79,7 @@ public class AdminController {
                              @RequestParam(required = true, defaultValue = "") String action,
                              Model model) {
         if (action.equals("delete")) {
-            if (fileService.deleteFile(fileId)) {
-                return "mainPage";
-            }
+            fileService.deleteFile(fileId);
         }
         return fileList(model);
     }

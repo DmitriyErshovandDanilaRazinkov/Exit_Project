@@ -1,5 +1,6 @@
 package com.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -26,6 +27,7 @@ public class Audio {
 
     @ApiModelProperty
     @ManyToMany(fetch = FetchType.EAGER)
+    @JsonIgnoreProperties("audio")
     private Set<Tag> tags;
 
     public Audio() {

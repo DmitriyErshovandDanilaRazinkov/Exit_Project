@@ -1,6 +1,7 @@
 package com.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -22,7 +23,8 @@ public class Role implements GrantedAuthority {
 
     @ApiModelProperty
     @Transient
-    @ManyToMany(mappedBy = "roles")
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "roles")
+    @JsonIgnoreProperties("role")
     private Set<User> users;
 
     public Role() {
