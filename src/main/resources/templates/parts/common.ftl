@@ -23,6 +23,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/">Home</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/user">My page</a>
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -36,14 +39,14 @@
                 </ul>
             </div>
             <@sec.authorize access="!isAuthenticated()">
-                <div class="btn btn-success mr-sm-2">
-                    <a href="/login">Войти</a>
-                    <a href="/registration">Зарегистрироваться</a>
+                <div>
+                    <a class="btn btn-success mr-sm-2" href="/login">Войти</a>
+                    <a class="btn btn-success mr-sm-2" href="/registration">Зарегистрироваться</a>
                 </div>
             </@sec.authorize>
             <@sec.authorize access="isAuthenticated()">
                 <div class="btn btn-outline-success">
-                    <a href="/logout">Выйти</a>
+                    <a class="btn-danger mr-sm-2" href="/logout">Выйти</a>
                 </div>
             </@sec.authorize>
             <@sec.authorize access="hasRole('ROLE_ADMIN')">

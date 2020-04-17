@@ -1,6 +1,5 @@
 package com.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -8,10 +7,15 @@ import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Date;
+
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
+
+import static org.hibernate.annotations.FetchMode.SELECT;
 
 
 @ApiModel
@@ -31,13 +35,29 @@ public class User implements UserDetails {
     @ApiModelProperty
     @Size(min = 2, message = "Не меньше 5 знаков")
     private String password;
+
+    @ApiModelProperty
+    private double cash;
+
+    @ApiModelProperty
+    private boolean premium;
+
+    @ApiModelProperty
+    private Date endPremium;
+
     @Transient
     private String passwordConfirm;
 
     @ApiModelProperty
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonIgnoreProperties("user")
-    private Set<Role> roles;
+    private Set<Role> roles = new HashSet<>();
+
+    @ApiModelProperty
+    @OneToMany(mappedBy = "owner")
+    @JsonIgnoreProperties("owner")
+    private Set<PlayList> playLists = new HashSet<>();
+
 
     public User() {
     }
@@ -75,5 +95,13 @@ public class User implements UserDetails {
     @Override
     public String getPassword() {
         return password;
+    }
+
+    public void addPlayList(PlayList playList) {
+        playLists.add(playList);
+    }
+
+    public void addRole(Role role) {
+        roles.add(role);
     }
 }

@@ -30,6 +30,11 @@ public class Audio {
     @JsonIgnoreProperties("audio")
     private Set<Tag> tags;
 
+    @ApiModelProperty
+    @ManyToMany(mappedBy = "listAudio", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonIgnoreProperties("listAudio")
+    private Set<PlayList> playLists;
+
     public Audio() {
     }
 

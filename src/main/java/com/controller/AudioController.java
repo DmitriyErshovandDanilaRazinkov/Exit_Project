@@ -25,7 +25,7 @@ public class AudioController {
 
     @ApiOperation("Получение списка аудио")
     @GetMapping("/audios")
-    public ResponseEntity<List<Audio>> getAllFiles() {
+    public ResponseEntity<List<Audio>> getAllAudios() {
         return ResponseEntity.ok(service.getAll());
     }
 

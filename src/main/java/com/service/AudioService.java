@@ -27,6 +27,11 @@ public class AudioService {
         this.tagService = tagService;
     }
 
+    public boolean saveAudio(Audio audio) {
+        repository.save(audio);
+        return true;
+    }
+
     public boolean saveAudio(Audio audio, Set<Tag> tags) {
 
         Audio audioFromDB = repository.findByName(audio.getName());
@@ -52,6 +57,10 @@ public class AudioService {
         }
     }
 
+    public Audio foundAudioByName(String name) {
+        return repository.findByName(name);
+    }
+
     public boolean deleteAudio(Long id) {
         if (repository.findById(id).isPresent()) {
             fileService.deleteFile(repository.findById(id).get().getFileId());
@@ -71,6 +80,8 @@ public class AudioService {
     }
 
     public void addTagToAudio(long audioId, long tagId) throws NotFoundException {
-        foundAudioById(audioId).setOneTag(tagService.foundTagById(tagId));
+        Audio audio = foundAudioById(audioId);
+        audio.setOneTag(tagService.foundTagById(tagId));
+        repository.save(audio);
     }
 }

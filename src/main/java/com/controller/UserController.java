@@ -4,6 +4,8 @@ import com.model.User;
 import com.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import javassist.NotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,8 +32,12 @@ public class UserController {
 
     @ApiOperation("Получение пользователя по id")
     @GetMapping("/users/{id}")
-    public ResponseEntity<User> getAllUsers(@PathVariable long id) {
-        return ResponseEntity.ok(service.findUserById(id));
+    public ResponseEntity<?> getUser(@PathVariable long id) {
+        try {
+            return ResponseEntity.ok(service.findUserById(id));
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     @ApiOperation("Удаление пользователя")
