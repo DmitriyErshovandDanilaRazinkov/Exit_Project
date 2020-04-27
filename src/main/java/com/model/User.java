@@ -15,8 +15,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.hibernate.annotations.FetchMode.SELECT;
-
 
 @ApiModel
 @Data
@@ -54,10 +52,10 @@ public class User implements UserDetails {
     private Set<Role> roles = new HashSet<>();
 
     @ApiModelProperty
-    @OneToMany(mappedBy = "owner")
-    @JsonIgnoreProperties("owner")
-    private Set<PlayList> playLists = new HashSet<>();
-
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonIgnoreProperties("user")
+    private Set<RoleInPlayList> roleInPlayLists = new HashSet<>();
+    ;
 
     public User() {
     }
@@ -97,11 +95,4 @@ public class User implements UserDetails {
         return password;
     }
 
-    public void addPlayList(PlayList playList) {
-        playLists.add(playList);
-    }
-
-    public void addRole(Role role) {
-        roles.add(role);
-    }
 }

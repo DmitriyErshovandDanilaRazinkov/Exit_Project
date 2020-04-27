@@ -2,6 +2,7 @@ package com.service;
 
 import com.model.Audio;
 import com.model.PlayList;
+import com.model.RoleInPlayList;
 import com.model.User;
 import com.repository.PlayListRepository;
 import javassist.NotFoundException;
@@ -18,21 +19,33 @@ public class PlayListService {
 
     private AudioService audioService;
 
-    public PlayListService(PlayListRepository repository, UserService userService, AudioService audioService) {
+    private RoleInPlayListsService roleInPlayListsService;
+
+    public PlayListService(PlayListRepository repository, UserService userService, AudioService audioService, RoleInPlayListsService roleInPlayListsService) {
         this.repository = repository;
         this.userService = userService;
         this.audioService = audioService;
+        this.roleInPlayListsService = roleInPlayListsService;
     }
 
     public boolean addPlayList(long ownerId, String name, boolean isPrivate) throws NotFoundException {
         User owner = userService.findUserById(ownerId);
         PlayList newPlayList = new PlayList(name, isPrivate);
 
-        newPlayList.setOwner(owner);
-        owner.addPlayList(newPlayList);
+        RoleInPlayList role = new RoleInPlayList();
+        role.setPlayList(newPlayList);
+        role.setUser(owner);
+        roleInPlayListsService.addRoleOwner(role);
+
+        roleInPlayListsService.saveNewRole(role);
+
+        newPlayList.getRoleInPlayLists().add(role);
+
+        owner.getRoleInPlayLists().add(role);
 
         repository.save(newPlayList);
         userService.saveUser(owner);
+        roleInPlayListsService.saveNewRole(role);
 
         return true;
     }
@@ -86,11 +99,30 @@ public class PlayListService {
         }
     }
 
+    public boolean addNewUserToPlayList(Long playListId, Long userId) throws NotFoundException {
+        User nowUser = userService.findUserById(userId);
+        PlayList nowPlayList = foundPlayListById(playListId);
+
+        RoleInPlayList role = new RoleInPlayList();
+
+        return false;
+    }
+
     public boolean deletePlayList(Long id) {
         if (repository.findById(id).isPresent()) {
             repository.deleteById(id);
             return true;
         }
+        return false;
+    }
+
+    public boolean checkUser(PlayList nowPlayList, Long userId) {
+        for (RoleInPlayList role : nowPlayList.getRoleInPlayLists()) {
+            if (role.getUser().getId().equals(userId)) {
+                return true;
+            }
+        }
+
         return false;
     }
 }

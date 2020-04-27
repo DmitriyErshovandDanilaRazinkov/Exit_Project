@@ -36,6 +36,7 @@ public class UploadController {
     public String uploadAudio(@RequestParam String name,
                               @RequestParam("file") MultipartFile file, Map<String, Object> model) throws IOException {
         audioService.uploadAudio(name, file);
+        model.put("result", "File upload");
         return "uploadForm/uploadResult";
     }
 

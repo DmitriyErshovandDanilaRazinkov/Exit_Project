@@ -71,7 +71,7 @@ public class AudioService {
     }
 
     public boolean uploadAudio(String name, MultipartFile file) throws IOException {
-        if (Objects.requireNonNull(file.getContentType()).substring('/').equals("audio")) {
+        if (Objects.requireNonNull(file.getContentType()).equals("audio/mpeg")) {
             Audio newAudio = new Audio(name, fileService.uploadFile(file));
             repository.save(newAudio);
             return true;

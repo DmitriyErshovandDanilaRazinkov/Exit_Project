@@ -1,7 +1,6 @@
 package com.service;
 
-import com.model.Role;
-import com.model.User;
+import com.model.*;
 import com.repository.RoleRepository;
 import com.repository.UserRepository;
 import javassist.NotFoundException;
@@ -14,12 +13,14 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class UserService implements UserDetailsService {
+
     @PersistenceContext
     private EntityManager em;
     @Autowired
@@ -60,10 +61,32 @@ public class UserService implements UserDetailsService {
             return false;
         }
 
-        user.addRole(roleRepository.findById(1L).get());
+        user.getRoles().add(roleRepository.findById(1L).get());
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         return true;
+    }
+
+    public List<PlayList> getUserList(Long id) {
+        User nowUser = userRepository.findById(id).get();
+
+        RoleInPlayList[] roleInPlayList = nowUser.getRoleInPlayLists().stream()
+                .filter((p) -> {
+                    for (PlayListRoles role : p.getPlayListRoles()) {
+                        if (role.getId() >= 3) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }).toArray(RoleInPlayList[]::new);
+
+        ArrayList<PlayList> playLists = new ArrayList<>();
+
+        for (RoleInPlayList role : roleInPlayList) {
+            playLists.add(role.getPlayList());
+        }
+
+        return playLists;
     }
 
     public boolean saveUser(User user) {

@@ -47,7 +47,7 @@ public class UserContentController {
         try {
             User user = (User) authentication.getPrincipal();
             playListService.addPlayList(user.getId(), name, isPrivate);
-            return getUserPage(authentication, model);
+            return "redirect:/";
         } catch (NotFoundException e) {
             return "exception";
         }
@@ -58,7 +58,8 @@ public class UserContentController {
     public String getUserPlayList(@PathVariable Long id, Authentication authentication, Model model) {
         try {
             PlayList nowPlayList = playListService.foundPlayListById(id);
-            if (nowPlayList.isPrivate() && !(((User) authentication.getPrincipal()).getId().equals(nowPlayList.getOwner().getId()))) {
+            if (nowPlayList.isPrivate() &&
+                    !(playListService.checkUser(nowPlayList, ((User) authentication.getPrincipal()).getId()))) {
                 return "exception";
             }
             model.addAttribute("playList", nowPlayList);
@@ -85,7 +86,34 @@ public class UserContentController {
         return getUserPlayList(id, authentication, model);
     }
 
-    @PostMapping("/user/playList/{id}/add")
+    @GetMapping("/audio")
+    public String getListAudio(Model model) {
+
+        model.addAttribute("listAudio", audioService.getAll());
+
+        return "/audios/userListAudios";
+    }
+
+    @GetMapping("/audio/addInPlayList/{id}")
+    public String addInPlayList(@PathVariable("id") Long id, Authentication authentication, Model model) {
+
+        model.addAttribute("playLists", userService.getUserList(((User) authentication.getPrincipal()).getId()));
+
+        return "/playLists/addAudioInPlayList";
+    }
+
+    @PostMapping("/audio/addInPlayList/{id}")
+    public String addInPlayList(@PathVariable("id") Long id, @RequestParam("playListId") Long playListId,
+                                Authentication authentication, Model model) throws NotFoundException {
+
+        playListService.addAudio(playListId, id);
+
+        model.addAttribute("playLists", userService.getUserList(((User) authentication.getPrincipal()).getId()));
+
+        return "/playLists/addAudioInPlayList";
+    }
+
+    @PostMapping("/user/addAudioInPlayList")
     public String addAudioToPlayList(@PathVariable Long id,
                                      @RequestParam(required = true, defaultValue = "") String name,
                                      Authentication authentication, Model model) {

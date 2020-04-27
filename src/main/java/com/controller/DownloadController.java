@@ -23,10 +23,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @RestController
-@RequestMapping("admin/download")
+@RequestMapping("download")
 public class DownloadController extends HttpServlet {
 
     @Value("${upload.path}")
@@ -38,16 +39,12 @@ public class DownloadController extends HttpServlet {
     @Autowired
     private FileService fileService;
 
-    @RequestMapping("/{fileName}")
-    public void downloadAudioResource(HttpServletRequest request, HttpServletResponse response, @PathVariable("fileName") String fileName) throws IOException {
-        File file = new File(uploadPath + "/" + fileName);
-//            FileAud fileAud = fileService.foundFileById(id);
-//            String realName = fileAud.getOriginalName();;
-//            response.setHeader("Content-Disposition", String.format("attachment; filename=\"" + realName + "\""));
-//            response.setContentLength((int) file.length());
-//            InputStream inputStream = new BufferedInputStream(new FileInputStream(file));
-//            FileCopyUtils.copy(inputStream, response.getOutputStream());
-        response.setHeader("Content-Type", "audio/mpeg");
+    @RequestMapping("/{fileId}")
+    public void downloadAudioResource(HttpServletRequest request, HttpServletResponse response, @PathVariable() Long fileId) throws IOException {
+        String fileName = fileService.foundFileById(fileId).getName();
+        File file = new File(uploadPath + '/' + fileName);
+
+        response.setHeader("Content-Type", servletContext.getMimeType(removeExtension(fileName)));
         response.setHeader("Content-Length", String.valueOf(file.length()));
         response.setHeader("Content-Disposition", "inline; fileName=\"" + uploadPath + "/" + fileName);
         Files.copy(file.toPath(), response.getOutputStream());

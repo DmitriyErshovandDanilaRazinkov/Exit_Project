@@ -12,6 +12,8 @@
         <a href="/admin/audios">Audios</a>
         <a href="/admin/files">Files</a>
         <a href="/admin/tags">Tags</a>
+        <a href="/upload/audio">Upload Audio</a>
+        <a href="/upload/file">Upload File</a>
         <a href="/admin">Main-admin</a>
         <a href="/">Main</a>
     </nav>

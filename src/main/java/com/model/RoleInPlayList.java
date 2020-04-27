@@ -13,7 +13,7 @@ import java.util.Set;
 @ApiModel
 @Data
 @Entity
-public class PlayList {
+public class RoleInPlayList {
 
     @ApiModelProperty
     @Id
@@ -21,28 +21,21 @@ public class PlayList {
     private Long id;
 
     @ApiModelProperty
-    private boolean isPrivate;
-
-    @ApiModelProperty
-    private String name;
-
-
-    @ApiModelProperty
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JsonIgnoreProperties("playLists")
-    private Set<Audio> listAudio = new HashSet<>();
+    @JsonIgnoreProperties("roleInPlayLists")
+    private Set<PlayListRoles> playListRoles = new HashSet<>();
 
     @ApiModelProperty
-    @OneToMany(mappedBy = "playList", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JsonIgnoreProperties("playList")
-    private Set<RoleInPlayList> roleInPlayLists = new HashSet<>();
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonIgnoreProperties("roleUserInPlayLists")
+    private PlayList playList;
 
-    public PlayList() {
-    }
+    @ApiModelProperty
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonIgnoreProperties("roleUserInPlayLists")
+    private User user;
 
-    public PlayList(String name, boolean isPrivate) {
-        this.isPrivate = isPrivate;
-        this.name = name;
+    public RoleInPlayList() {
     }
 
     public int hashCode() {

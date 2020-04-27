@@ -16,11 +16,11 @@
         </form>
     </div>
 
-    <#list user.playLists as playList>
+    <#list user.getRoleInPlayLists() as role>
         <div>
             <tr>
-                <td><a href="/user/playList/${playList.id}">${playList.id}</a></td>
-                <td>${playList.name}</td>
+                <td><a href="/user/playList/${role.getPlayList().id}">${role.getPlayList().id}</a></td>
+                <td>${role.getPlayList().name}</td>
             </tr>
         </div>
     </#list>

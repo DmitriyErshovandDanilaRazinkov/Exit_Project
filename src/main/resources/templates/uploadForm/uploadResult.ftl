@@ -1,4 +1,4 @@
-<#import "../parts/common.ftl" as common>
+<#import "../parts/admincommon.ftl" as common>
 
 <@common.page>
 

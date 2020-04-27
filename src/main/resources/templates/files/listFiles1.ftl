@@ -28,6 +28,5 @@
         </#list>
     </table>
 
-
 </@common.page>
 
