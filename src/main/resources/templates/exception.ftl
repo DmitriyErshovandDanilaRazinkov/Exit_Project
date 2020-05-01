@@ -1,5 +1,8 @@
+
 <#import "parts/common.ftl" as common>
 
 <@common.page>
-    error
+    <div>
+        ${exceptionText}
+    </div>
 </@common.page>

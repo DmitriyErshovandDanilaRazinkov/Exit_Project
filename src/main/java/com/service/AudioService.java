@@ -1,9 +1,9 @@
 package com.service;
 
+import com.exceptions.NotFoundDataBaseException;
 import com.model.Audio;
 import com.model.Tag;
 import com.repository.AudioRepository;
-import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -49,11 +49,11 @@ public class AudioService {
         return repository.findAll();
     }
 
-    public Audio foundAudioById(long id) throws NotFoundException {
+    public Audio foundAudioById(long id) {
         if (repository.findById(id).isPresent()) {
             return repository.findById(id).get();
         } else {
-            throw new NotFoundException("Аудио не найдено");
+            throw new NotFoundDataBaseException("Аудио не найдено");
         }
     }
 
@@ -63,7 +63,6 @@ public class AudioService {
 
     public boolean deleteAudio(Long id) {
         if (repository.findById(id).isPresent()) {
-            fileService.deleteFile(repository.findById(id).get().getFileId());
             repository.deleteById(id);
             return true;
         }
@@ -79,7 +78,7 @@ public class AudioService {
         return false;
     }
 
-    public void addTagToAudio(long audioId, long tagId) throws NotFoundException {
+    public void addTagToAudio(long audioId, long tagId) {
         Audio audio = foundAudioById(audioId);
         audio.setOneTag(tagService.foundTagById(tagId));
         repository.save(audio);

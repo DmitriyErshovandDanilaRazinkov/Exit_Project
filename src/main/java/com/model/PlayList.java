@@ -26,6 +26,10 @@ public class PlayList {
     @ApiModelProperty
     private String name;
 
+    @ApiModelProperty
+    @ManyToMany(mappedBy = "playLists", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonIgnoreProperties("playLists")
+    private Set<User> users = new HashSet<>();
 
     @ApiModelProperty
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -43,6 +47,10 @@ public class PlayList {
     public PlayList(String name, boolean isPrivate) {
         this.isPrivate = isPrivate;
         this.name = name;
+    }
+
+    public boolean equals(PlayList playList) {
+        return id.equals(playList.getId());
     }
 
     public int hashCode() {

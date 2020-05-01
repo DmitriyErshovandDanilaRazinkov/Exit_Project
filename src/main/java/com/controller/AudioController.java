@@ -32,11 +32,7 @@ public class AudioController {
     @ApiOperation("Получение аудио по id")
     @GetMapping("/audios/{id}")
     public ResponseEntity<?> getAudio(@PathVariable long id) {
-        try {
-            return ResponseEntity.ok(service.foundAudioById(id));
-        } catch (NotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        return ResponseEntity.ok(service.foundAudioById(id));
     }
 
     @ApiOperation("Удаление аудио")
@@ -48,11 +44,7 @@ public class AudioController {
 
     @PostMapping("/audios/{audioId}/{tagId}")
     public ResponseEntity<?> addTagToAudio(@PathVariable long audioId, @PathVariable long tagId) {
-        try {
-            service.addTagToAudio(audioId, tagId);
-        } catch (NotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        service.addTagToAudio(audioId, tagId);
         return ResponseEntity.ok().build();
     }
 }

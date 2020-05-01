@@ -33,11 +33,7 @@ public class TagController {
     @ApiOperation("Получение тэга по id")
     @GetMapping("/tags/{id}")
     public ResponseEntity<?> getFile(@PathVariable long id) {
-        try {
-            return ResponseEntity.ok(service.foundTagById(id));
-        } catch (NotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        return ResponseEntity.ok(service.foundTagById(id));
     }
 
     @ApiOperation("Удаление файла")

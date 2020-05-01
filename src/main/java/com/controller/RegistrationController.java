@@ -36,13 +36,9 @@ public class RegistrationController {
             model.addAttribute("passwordError", "Пароли не совпадают");
             return "login/registration";
         }
-        try {
-            if (!userService.addUser(userForm)) {
-                model.addAttribute("usernameError", "Пользователь с таким именем уже существует");
-                return "login/registration";
-            }
-        } catch (NotFoundException e) {
-            e.printStackTrace();
+        if (!userService.addUser(userForm)) {
+            model.addAttribute("usernameError", "Пользователь с таким именем уже существует");
+            return "login/registration";
         }
 
         return "mainPage";

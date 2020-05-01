@@ -7,13 +7,10 @@
             <input type="text" name="name">
         </div>
         <div>
-            <input type="text" name="tag">
-        </div>
-        <div>
             <input type="file" name="file">
         </div>
         <div>
-            <button type="submit"> Upload </button>
+            <button type="submit"> Upload</button>
         </div>
     </form>
 

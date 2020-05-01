@@ -23,17 +23,10 @@
                         <source src="/download/${audio.fileId}">
                     </audio>
                 </td>
-                <td>
-                    <form enctype="multipart/form-data" method="post">
-                        <input type="hidden" name="audioId" value="${audio.id}"/>
-                        <input type="hidden" name="action" value="delete"/>
-                        <button type="submit">Delete</button>
-                    </form>
-                </td>
             </tr>
         </#list>
     </table>
 
-    <a href="/playLists/${playList.id}/users">Пользователи</a>
+    <a href="playLists/${playList.id}/users"></a>
 
 </@common.page>

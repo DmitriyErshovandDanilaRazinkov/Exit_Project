@@ -4,11 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
 
 @ApiModel
 @Data
@@ -21,9 +18,8 @@ public class RoleInPlayList {
     private Long id;
 
     @ApiModelProperty
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JsonIgnoreProperties("roleInPlayLists")
-    private Set<PlayListRoles> playListRoles = new HashSet<>();
+    @Enumerated(EnumType.ORDINAL)
+    private Role_PlayList playListRole;
 
     @ApiModelProperty
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -36,6 +32,10 @@ public class RoleInPlayList {
     private User user;
 
     public RoleInPlayList() {
+    }
+
+    public boolean equals(RoleInPlayList roleInPlayList) {
+        return id.equals(roleInPlayList.getId());
     }
 
     public int hashCode() {

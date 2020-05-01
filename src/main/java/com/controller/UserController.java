@@ -33,11 +33,7 @@ public class UserController {
     @ApiOperation("Получение пользователя по id")
     @GetMapping("/users/{id}")
     public ResponseEntity<?> getUser(@PathVariable long id) {
-        try {
-            return ResponseEntity.ok(service.findUserById(id));
-        } catch (NotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        return ResponseEntity.ok(service.findUserById(id));
     }
 
     @ApiOperation("Удаление пользователя")

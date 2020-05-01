@@ -1,11 +1,8 @@
 package com.service;
 
-import com.model.Audio;
-import com.model.PlayList;
-import com.model.RoleInPlayList;
-import com.model.User;
+import com.exceptions.NotFoundDataBaseException;
+import com.model.*;
 import com.repository.PlayListRepository;
-import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,38 +25,47 @@ public class PlayListService {
         this.roleInPlayListsService = roleInPlayListsService;
     }
 
-    public boolean addPlayList(long ownerId, String name, boolean isPrivate) throws NotFoundException {
+    public boolean savePlayList(PlayList playList) {
+        repository.save(playList);
+        return true;
+    }
+
+    public boolean addPlayList(long ownerId, String name, boolean isPrivate) throws NotFoundDataBaseException {
         User owner = userService.findUserById(ownerId);
         PlayList newPlayList = new PlayList(name, isPrivate);
 
         RoleInPlayList role = new RoleInPlayList();
         role.setPlayList(newPlayList);
         role.setUser(owner);
-        roleInPlayListsService.addRoleOwner(role);
+        role.setPlayListRole(Role_PlayList.ROLE_OWNER);
 
-        roleInPlayListsService.saveNewRole(role);
+        roleInPlayListsService.saveRole(role);
 
+        newPlayList.getUsers().add(owner);
         newPlayList.getRoleInPlayLists().add(role);
 
-        owner.getRoleInPlayLists().add(role);
+        savePlayList(newPlayList);
 
-        repository.save(newPlayList);
+        owner.getPlayLists().add(newPlayList);
+        owner.getRoleInPlayLists().put(newPlayList.getId(), role);
+
         userService.saveUser(owner);
-        roleInPlayListsService.saveNewRole(role);
+        repository.save(newPlayList);
+        roleInPlayListsService.saveRole(role);
 
         return true;
     }
 
-    public boolean setPrivate(long id, boolean newPrivate) throws NotFoundException {
+    public boolean setPrivate(long id, boolean newPrivate) throws NotFoundDataBaseException {
         if (repository.findById(id).isPresent()) {
             repository.findById(id).get().setPrivate(newPrivate);
             return true;
         } else {
-            throw new NotFoundException("ПлейЛист не найден");
+            throw new NotFoundDataBaseException("ПлейЛист не найден");
         }
     }
 
-    public boolean addAudio(long id, long audioId) throws NotFoundException {
+    public boolean addAudio(long id, long audioId) throws NotFoundDataBaseException {
         if (repository.findById(id).isPresent()) {
 
             Audio nowAudio = audioService.foundAudioById(audioId);
@@ -74,16 +80,16 @@ public class PlayListService {
 
             return true;
         } else {
-            throw new NotFoundException("ПлейЛист не найден");
+            throw new NotFoundDataBaseException("ПлейЛист не найден");
         }
     }
 
-    public boolean deleteAudioFromPlayList(long id, long audioId) throws NotFoundException {
+    public boolean deleteAudioFromPlayList(long id, long audioId) throws NotFoundDataBaseException {
         if (repository.findById(id).isPresent()) {
             repository.findById(id).get().getListAudio().remove(audioService.foundAudioById(audioId));
             return true;
         } else {
-            throw new NotFoundException("ПлейЛист не найден");
+            throw new NotFoundDataBaseException("ПлейЛист не найден");
         }
     }
 
@@ -91,21 +97,61 @@ public class PlayListService {
         return repository.findAll();
     }
 
-    public PlayList foundPlayListById(long id) throws NotFoundException {
+    public PlayList findPlayListById(long id) {
         if (repository.findById(id).isPresent()) {
             return repository.findById(id).get();
         } else {
-            throw new NotFoundException("ПлейЛист не найден");
+            throw new NotFoundDataBaseException("ПлейЛист не найден");
         }
     }
 
-    public boolean addNewUserToPlayList(Long playListId, Long userId) throws NotFoundException {
-        User nowUser = userService.findUserById(userId);
-        PlayList nowPlayList = foundPlayListById(playListId);
+    public boolean addNewUserToPlayList(Long playListId, Long userId) {
+        User user = userService.findUserById(userId);
+        PlayList nowPlayList = findPlayListById(playListId);
 
         RoleInPlayList role = new RoleInPlayList();
+        role.setPlayList(nowPlayList);
+        role.setUser(user);
+        role.setPlayListRole(Role_PlayList.ROLE_USER);
 
-        return false;
+        roleInPlayListsService.saveRole(role);
+
+        nowPlayList.getUsers().add(user);
+        nowPlayList.getRoleInPlayLists().add(role);
+
+        user.getPlayLists().add(nowPlayList);
+        user.getRoleInPlayLists().put(nowPlayList.getId(), role);
+
+        userService.saveUser(user);
+        repository.save(nowPlayList);
+        roleInPlayListsService.saveRole(role);
+
+        return true;
+    }
+
+    public boolean deleteUser(Long playListId, Long userId) {
+        User user = userService.findUserById(userId);
+        PlayList nowPlayList = findPlayListById(playListId);
+
+        RoleInPlayList role = user.getRoleInPlayLists().get(playListId);
+
+        role.setPlayListRole(null);
+        role.setPlayList(null);
+        role.setUser(null);
+
+        roleInPlayListsService.saveRole(role);
+
+        nowPlayList.getUsers().remove(user);
+        nowPlayList.getRoleInPlayLists().remove(role);
+
+        user.getPlayLists().remove(nowPlayList);
+        user.getRoleInPlayLists().remove(nowPlayList.getId());
+
+        userService.saveUser(user);
+        repository.save(nowPlayList);
+        roleInPlayListsService.deleteRole(role);
+
+        return true;
     }
 
     public boolean deletePlayList(Long id) {
@@ -117,12 +163,6 @@ public class PlayListService {
     }
 
     public boolean checkUser(PlayList nowPlayList, Long userId) {
-        for (RoleInPlayList role : nowPlayList.getRoleInPlayLists()) {
-            if (role.getUser().getId().equals(userId)) {
-                return true;
-            }
-        }
-
-        return false;
+        return userService.findUserById(userId).getPlayLists().contains(nowPlayList);
     }
 }

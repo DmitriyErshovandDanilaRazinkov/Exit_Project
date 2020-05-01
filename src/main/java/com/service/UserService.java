@@ -1,22 +1,18 @@
 package com.service;
 
+import com.exceptions.NotFoundDataBaseException;
 import com.model.*;
 import com.repository.RoleRepository;
 import com.repository.UserRepository;
-import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -30,23 +26,22 @@ public class UserService implements UserDetailsService {
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) {
         User user = userRepository.findByUsername(username);
 
         if (user == null) {
-            throw new UsernameNotFoundException("User not found");
+            throw new NotFoundDataBaseException("User not found");
         }
 
         return user;
     }
 
-    public User findUserById(Long id) throws NotFoundException {
+    public User findUserById(Long id) {
         if (userRepository.findById(id).isPresent()) {
             return userRepository.findById(id).get();
         } else {
-            throw new NotFoundException("Пользователь не найден");
+            throw new NotFoundDataBaseException("Пользователь не найден");
         }
     }
 
@@ -54,7 +49,7 @@ public class UserService implements UserDetailsService {
         return userRepository.findAll();
     }
 
-    public boolean addUser(User user) throws NotFoundException {
+    public boolean addUser(User user) {
         User userFromDB = userRepository.findByUsername(user.getUsername());
 
         if (userFromDB != null) {
@@ -68,25 +63,7 @@ public class UserService implements UserDetailsService {
     }
 
     public List<PlayList> getUserList(Long id) {
-        User nowUser = userRepository.findById(id).get();
-
-        RoleInPlayList[] roleInPlayList = nowUser.getRoleInPlayLists().stream()
-                .filter((p) -> {
-                    for (PlayListRoles role : p.getPlayListRoles()) {
-                        if (role.getId() >= 3) {
-                            return true;
-                        }
-                    }
-                    return false;
-                }).toArray(RoleInPlayList[]::new);
-
-        ArrayList<PlayList> playLists = new ArrayList<>();
-
-        for (RoleInPlayList role : roleInPlayList) {
-            playLists.add(role.getPlayList());
-        }
-
-        return playLists;
+        return userRepository.findById(id).get().getPlayLists();
     }
 
     public boolean saveUser(User user) {
@@ -105,5 +82,12 @@ public class UserService implements UserDetailsService {
     public List<User> userGetList(Long idMin) {
         return em.createQuery("SELECT u FROM User u WHERE u.id > :paramId", User.class)
                 .setParameter("paramId", idMin).getResultList();
+    }
+
+    public boolean checkUserRights(Long userId, Long playListId) {
+
+        User nowUser = findUserById(userId);
+
+        return Role_PlayList.ROLE_MODERATOR.compare(nowUser.getRoleInPlayLists().get(playListId).getPlayListRole());
     }
 }

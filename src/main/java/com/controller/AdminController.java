@@ -46,8 +46,8 @@ public class AdminController {
 
     @ApiOperation("Удаляет пользователя")
     @PostMapping("/admin/users")
-    public String deleteUser(@RequestParam(required = true, defaultValue = "") Long userId,
-                             @RequestParam(required = true, defaultValue = "") String action,
+    public String deleteUser(@RequestParam(defaultValue = "") Long userId,
+                             @RequestParam(defaultValue = "") String action,
                              Model model) {
         if (action.equals("delete")) {
             userService.deleteUser(userId);
@@ -72,8 +72,8 @@ public class AdminController {
 
     @ApiOperation("Удаляет файл")
     @PostMapping("/admin/files")
-    public String deleteFile(@RequestParam(required = true, defaultValue = "") Long fileId,
-                             @RequestParam(required = true, defaultValue = "") String action,
+    public String deleteFile(@RequestParam(defaultValue = "") Long fileId,
+                             @RequestParam(defaultValue = "") String action,
                              Model model) {
         if (action.equals("delete")) {
             fileService.deleteFile(fileId);
@@ -98,8 +98,8 @@ public class AdminController {
 
     @ApiOperation("Удаляет аудио")
     @PostMapping("/admin/audios")
-    public String deleteAudio(@RequestParam(required = true, defaultValue = "") Long audioId,
-                              @RequestParam(required = true, defaultValue = "") String action,
+    public String deleteAudio(@RequestParam(defaultValue = "") Long audioId,
+                              @RequestParam(defaultValue = "") String action,
                               Model model) {
         if (action.equals("delete")) {
             audioService.deleteAudio(audioId);
@@ -110,25 +110,15 @@ public class AdminController {
     @ApiOperation("Аудио по id")
     @GetMapping("/admin/audio/{audioId}")
     public String getAudio(@PathVariable Long audioId, Model model) {
-        try {
-            model.addAttribute("audio", audioService.foundAudioById(audioId));
-            model.addAttribute("tagList", tagService.getAll());
-        } catch (NotFoundException e) {
-            model.addAttribute("exceptionTxt", e.getMessage());
-            return "/exception";
-        }
+        model.addAttribute("audio", audioService.foundAudioById(audioId));
+        model.addAttribute("tagList", tagService.getAll());
         return "/audios/audio";
     }
 
     @ApiOperation("Добавление тэга к аудио")
     @GetMapping("/admin/audios/{audioId}/{tagId}")
     public String addTagToAudio(@PathVariable long audioId, @PathVariable long tagId, Model model) {
-        try {
-            audioService.addTagToAudio(audioId, tagId);
-        } catch (NotFoundException e) {
-            model.addAttribute("exception", e.getMessage());
-            return "/exception";
-        }
+        audioService.addTagToAudio(audioId, tagId);
         return getAudio(audioId, model);
     }
 
@@ -142,8 +132,8 @@ public class AdminController {
 
     @ApiOperation("Удаляет тэг")
     @PostMapping("/admin/tags")
-    public String deleteTag(@RequestParam(required = true, defaultValue = "") Long tagId,
-                            @RequestParam(required = true, defaultValue = "") String action,
+    public String deleteTag(@RequestParam(defaultValue = "") Long tagId,
+                            @RequestParam(defaultValue = "") String action,
                             Model model) {
         if (action.equals("delete")) {
             if (tagService.deleteTag(tagId)) {
@@ -162,12 +152,7 @@ public class AdminController {
     @ApiOperation("Показывает тэг по id")
     @GetMapping("/admin/getTag/{tagId}")
     public String getTag(@PathVariable("tagId") Long tagId, Model model) {
-        try {
-            model.addAttribute("tags", tagService.foundTagById(tagId));
-        } catch (NotFoundException e) {
-            model.addAttribute("exceptionTxt", e.getMessage());
-            return "/exception";
-        }
+        model.addAttribute("tags", tagService.foundTagById(tagId));
         return "/tags/listTags";
     }
 }

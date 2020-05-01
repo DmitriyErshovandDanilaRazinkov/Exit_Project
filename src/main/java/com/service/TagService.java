@@ -1,10 +1,8 @@
 package com.service;
 
-import com.model.FileAud;
+import com.exceptions.NotFoundDataBaseException;
 import com.model.Tag;
-import com.repository.FileRepository;
 import com.repository.TagRepository;
-import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -29,11 +27,11 @@ public class TagService {
         return repository.findAll();
     }
 
-    public Tag foundTagById(long id) throws NotFoundException {
+    public Tag foundTagById(long id) {
         if (repository.findById(id).isPresent()) {
             return repository.findById(id).get();
         } else {
-            throw new NotFoundException("Тэг не найден");
+            throw new NotFoundDataBaseException("Тэг не найден");
         }
     }
 

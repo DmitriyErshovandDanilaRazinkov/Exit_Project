@@ -7,13 +7,10 @@ import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Date;
+import java.util.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 
 @ApiModel
@@ -52,10 +49,15 @@ public class User implements UserDetails {
     private Set<Role> roles = new HashSet<>();
 
     @ApiModelProperty
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("users")
+    private List<PlayList> playLists = new ArrayList<>();
+
+    @ApiModelProperty
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @MapKeyColumn(name = "role_in_play_lists_key")
     @JsonIgnoreProperties("user")
-    private Set<RoleInPlayList> roleInPlayLists = new HashSet<>();
-    ;
+    private Map<Long, RoleInPlayList> roleInPlayLists = new HashMap<>(); // Long - id плейлиста
 
     public User() {
     }
@@ -95,4 +97,7 @@ public class User implements UserDetails {
         return password;
     }
 
+    public int hashCode() {
+        return Long.hashCode(id);
+    }
 }

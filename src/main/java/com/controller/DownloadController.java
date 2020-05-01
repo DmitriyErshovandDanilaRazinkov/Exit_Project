@@ -1,11 +1,7 @@
 package com.controller;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URLConnection;
 import java.nio.file.Files;
 
 import javax.servlet.http.HttpServlet;
@@ -13,17 +9,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletContext;
 
-import com.model.FileAud;
 import com.service.FileService;
-import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 
 @RestController
@@ -33,11 +24,14 @@ public class DownloadController extends HttpServlet {
     @Value("${upload.path}")
     private String uploadPath;
 
-    @Autowired
     private ServletContext servletContext;
 
-    @Autowired
     private FileService fileService;
+
+    public DownloadController(ServletContext servletContext, FileService fileService) {
+        this.servletContext = servletContext;
+        this.fileService = fileService;
+    }
 
     @RequestMapping("/{fileId}")
     public void downloadAudioResource(HttpServletRequest request, HttpServletResponse response, @PathVariable() Long fileId) throws IOException {

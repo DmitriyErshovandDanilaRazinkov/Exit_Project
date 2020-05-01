@@ -16,4 +16,8 @@
         </#list>
     </table>
 
+    <div>
+        ${result}
+    </div>
+
 </@common.page>

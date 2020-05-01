@@ -2,6 +2,7 @@ package com.service;
 
 import com.model.FileAud;
 import com.repository.FileRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,11 +19,8 @@ public class FileService {
     @Value("${upload.path}")
     private String uploadPath;
 
+    @Autowired
     private FileRepository repository;
-
-    public FileService(FileRepository repository) {
-        this.repository = repository;
-    }
 
     public List<FileAud> getAll() {
         return repository.findAll();
@@ -37,12 +35,12 @@ public class FileService {
 
     public boolean deleteFile(Long id) {
         if (repository.findById(id).isPresent()) {
-            File file = new File(uploadPath + repository.findById(id).get().getName());
+            File file = new File(uploadPath + '/' + repository.findById(id).get().getName());
+            repository.deleteById(id);
+
             if (!file.delete()) {
                 return false;
             }
-            repository.deleteById(id);
-            return true;
         }
         return false;
     }
