@@ -1,12 +1,11 @@
 package com.controller;
 
-import com.model.PlayList;
+import com.model.Role_PlayList;
 import com.model.User;
 import com.service.AudioService;
 import com.service.PlayListService;
 import com.service.UserService;
 import io.swagger.annotations.Api;
-import javassist.NotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -42,7 +41,7 @@ public class UserContentController {
                                     Authentication authentication, Model model) {
             User user = (User) authentication.getPrincipal();
             playListService.addPlayList(user.getId(), name, isPrivate);
-            return "redirect:/";
+        return getUserPage(authentication, model);
     }
 
     @GetMapping("/audio")
@@ -65,9 +64,9 @@ public class UserContentController {
 
     @PostMapping("/audio/addInPlayList/{id}")
     public String addInPlayList(@PathVariable("id") Long id, @RequestParam("playListId") Long playListId,
-                                Authentication authentication, Model model) throws NotFoundException {
+                                Authentication authentication, Model model) {
 
-        if (!userService.checkUserRights(((User) authentication.getPrincipal()).getId(), playListId)) {
+        if (!userService.checkUserRights(((User) authentication.getPrincipal()).getId(), playListId, Role_PlayList.ROLE_MODERATOR)) {
             model.addAttribute("exceptionText", "Вы не имеете прав");
             return "exception";
         }
@@ -81,4 +80,47 @@ public class UserContentController {
         return "/playLists/addAudioInPlayList";
     }
 
+    @GetMapping("/store/premium")
+    public String getBuyPremiumPage(Model model) {
+        model.addAttribute("message", "");
+        model.addAttribute("exception", "");
+        return "store/premiumStore";
+    }
+
+    @PostMapping("/store/premium")
+    public String buyPremium(Authentication authentication, Model model) {
+
+        if (userService.buyPremium(((User) authentication.getPrincipal()).getId(), 3600L * 24L * 10L, 30)) {
+            model.addAttribute("message", "Премиум куплен");
+            model.addAttribute("exception", "");
+        } else {
+            model.addAttribute("message", "");
+            model.addAttribute("exception", "Не хватает средств");
+        }
+
+        return "store/premiumStore";
+    }
+
+    @PostMapping("/store/addCash")
+    public String addCash(Authentication authentication, Model model) {
+
+        model.addAttribute("message", "Счет пополнен");
+        model.addAttribute("exception", "");
+        userService.addCash(((User) authentication.getPrincipal()).getId(), 50D);
+
+        return "store/premiumStore";
+    }
+
+    @PostMapping("playList/delete")
+    public String deletePlayList(@RequestParam Long playListId, Authentication authentication, Model model) {
+
+        if (!userService.checkUserRights(((User) authentication.getPrincipal()).getId(), playListId, Role_PlayList.ROLE_OWNER)) {
+            model.addAttribute("exceptionText", "Вы не имеете прав");
+            return "exception";
+        }
+
+        playListService.deletePlayList(playListId);
+
+        return getUserPage(authentication, model);
+    }
 }

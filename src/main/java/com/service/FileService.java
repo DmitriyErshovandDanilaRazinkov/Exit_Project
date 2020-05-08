@@ -19,8 +19,11 @@ public class FileService {
     @Value("${upload.path}")
     private String uploadPath;
 
-    @Autowired
     private FileRepository repository;
+
+    public FileService(FileRepository repository) {
+        this.repository = repository;
+    }
 
     public List<FileAud> getAll() {
         return repository.findAll();

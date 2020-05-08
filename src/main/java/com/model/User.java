@@ -32,10 +32,10 @@ public class User implements UserDetails {
     private String password;
 
     @ApiModelProperty
-    private double cash;
+    private double cash = 0;
 
     @ApiModelProperty
-    private boolean premium;
+    private boolean premium = false;
 
     @ApiModelProperty
     private Date endPremium;
@@ -49,7 +49,7 @@ public class User implements UserDetails {
     private Set<Role> roles = new HashSet<>();
 
     @ApiModelProperty
-    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties("users")
     private List<PlayList> playLists = new ArrayList<>();
 

@@ -6,16 +6,16 @@ import java.util.List;
 
 public enum Role_PlayList {
 
-    ROLE_OWNER(4L, "ROLE_OWNER"),
-    ROLE_ADMIN(3L, "ROLE_ADMIN"),
-    ROLE_MODERATOR(2L, "ROLE_MODERATOR"),
-    ROLE_USER(1L, "ROLE_USER");
+    ROLE_OWNER(4, "OWNER"),
+    ROLE_ADMIN(3, "ADMIN"),
+    ROLE_MODERATOR(2, "MODERATOR"),
+    ROLE_USER(1, "USER");
 
-    private Long id;
+    private int id;
 
     private String name;
 
-    Role_PlayList(Long id, String name) {
+    Role_PlayList(int id, String name) {
         this.id = id;
         this.name = name;
     }
@@ -24,7 +24,7 @@ public enum Role_PlayList {
         return this.id >= role.getId();
     }
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
@@ -42,4 +42,11 @@ public enum Role_PlayList {
         return list;
     }
 
+    public static int compareTo(RoleInPlayList role1, RoleInPlayList role2) {
+        return role1.getPlayListRole().compare(role2.getPlayListRole()) ? -1 : 1;
+    }
+
+    public boolean compareUnder(Role_PlayList role) {
+        return this.id <= role.getId();
+    }
 }

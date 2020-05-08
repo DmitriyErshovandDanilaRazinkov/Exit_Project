@@ -3,8 +3,6 @@ package com.controller;
 import com.model.Audio;
 import com.service.AudioService;
 import io.swagger.annotations.ApiOperation;
-import javassist.NotFoundException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;

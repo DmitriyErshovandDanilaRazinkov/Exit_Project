@@ -16,13 +16,14 @@
         </form>
     </div>
 
-    <#list user.playLists as playList>
-        <div>
-            <tr>
-                <td><a href="/playLists/${playList.id}">${playList.id}</a></td>
-                <td>${playList.name}</td>
-            </tr>
-        </div>
-    </#list>
+    <table>
+        <#list user.playLists as playList>
+            <div>
+                <tr>
+                    <td><a href="/playLists/${playList.id}">${playList.name}</a></td>
+                </tr>
+            </div>
+        </#list>
+    </table>
 
 </@common.page>

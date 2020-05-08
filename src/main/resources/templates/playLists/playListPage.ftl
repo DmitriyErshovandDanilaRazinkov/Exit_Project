@@ -6,6 +6,10 @@
         ${playList.name}
     </div>
 
+    <div>
+        <a href="/playLists/${playList.id}/users">Пользователи</a>
+    </div>
+
     <table>
         <thead>
         <tr>
@@ -24,16 +28,16 @@
                     </audio>
                 </td>
                 <td>
-                    <form enctype="multipart/form-data" method="post">
-                        <input type="hidden" name="audioId" value="${audio.id}"/>
-                        <input type="hidden" name="action" value="delete"/>
-                        <button type="submit">Delete</button>
-                    </form>
+                    <#if (userRole.id >= 2)>
+                        <form enctype="multipart/form-data" method="post">
+                            <input type="hidden" name="audioId" value="${audio.id}"/>
+                            <input type="hidden" name="action" value="delete"/>
+                            <button type="submit">Delete</button>
+                        </form>
+                    </#if>
                 </td>
             </tr>
         </#list>
     </table>
-
-    <a href="/playLists/${playList.id}/users">Пользователи</a>
 
 </@common.page>

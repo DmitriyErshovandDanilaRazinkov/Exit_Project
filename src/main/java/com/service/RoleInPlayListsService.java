@@ -9,7 +9,6 @@ public class RoleInPlayListsService {
 
     private RoleInPlayListRepository repository;
 
-
     public RoleInPlayListsService(RoleInPlayListRepository repository) {
         this.repository = repository;
     }

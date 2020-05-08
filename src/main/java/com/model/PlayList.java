@@ -27,6 +27,9 @@ public class PlayList {
     private String name;
 
     @ApiModelProperty
+    private String joinCode;
+
+    @ApiModelProperty
     @ManyToMany(mappedBy = "playLists", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonIgnoreProperties("playLists")
     private Set<User> users = new HashSet<>();

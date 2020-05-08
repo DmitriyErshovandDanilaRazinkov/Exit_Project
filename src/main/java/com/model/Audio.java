@@ -31,7 +31,7 @@ public class Audio {
     private Set<Tag> tags;
 
     @ApiModelProperty
-    @ManyToMany(mappedBy = "listAudio", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "listAudio", cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JsonIgnoreProperties("listAudio")
     private Set<PlayList> playLists;
 
