@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
-public class DontHaveRightsExceptionHandler {
+public class ExceptionHandlerController {
 
     @ExceptionHandler(DontHaveRightsException.class)
     public String notFoundExceptionHandler(Model model, DontHaveRightsException ex) {
@@ -16,5 +16,22 @@ public class DontHaveRightsExceptionHandler {
 
         return "exception";
     }
+
+    @ExceptionHandler(NotFoundDataBaseException.class)
+    public String notFoundExceptionHandler(Model model, NotFoundDataBaseException ex) {
+
+        model.addAttribute("exceptionText", ex.getMessage());
+
+        return "exception";
+    }
+
+    @ExceptionHandler(java.lang.NullPointerException.class)
+    public String Exception(Model model, NullPointerException ex) {
+
+        model.addAttribute("exceptionText", ex.getMessage());
+
+        return "exception";
+    }
+
 
 }

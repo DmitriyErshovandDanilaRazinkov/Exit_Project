@@ -1,12 +1,11 @@
 package com.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @ApiModel
 @Data
@@ -14,7 +13,9 @@ import javax.persistence.Id;
 public class FileAud {
 
     @ApiModelProperty
-    private @Id @GeneratedValue Long id;
+    @Id
+    @GeneratedValue
+    private Long id;
 
     @ApiModelProperty
     private String name;

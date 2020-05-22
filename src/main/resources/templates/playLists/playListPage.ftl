@@ -7,7 +7,7 @@
     </div>
 
     <div>
-        <a href="/playLists/${playList.id}/users">Пользователи</a>
+        <a href="/playLists/${playList.id}/listUsers">Пользователи</a>
     </div>
 
     <table>
@@ -24,11 +24,11 @@
                 <td><#list audio.tags as tag>${tag.name};</#list></td>
                 <td>
                     <audio controls preload="metadata">
-                        <source src="/download/${audio.fileId}">
+                        <source src="/download/${audio.file.id}">
                     </audio>
                 </td>
                 <td>
-                    <#if (userRole.id >= 2)>
+                    <#if (userRole.playListRole.id >= 2)>
                         <form enctype="multipart/form-data" method="post">
                             <input type="hidden" name="audioId" value="${audio.id}"/>
                             <input type="hidden" name="action" value="delete"/>

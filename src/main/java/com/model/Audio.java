@@ -15,15 +15,16 @@ import java.util.Set;
 public class Audio {
 
     @ApiModelProperty
-    private @Id
+    @Id
     @GeneratedValue
-    Long id;
+    private Long id;
 
     @ApiModelProperty
     private String name;
 
     @ApiModelProperty
-    private Long fileId;
+    @OneToOne(fetch = FetchType.LAZY)
+    private FileAud file;
 
     @ApiModelProperty
     @ManyToMany(fetch = FetchType.EAGER)
@@ -31,16 +32,16 @@ public class Audio {
     private Set<Tag> tags;
 
     @ApiModelProperty
-    @ManyToMany(mappedBy = "listAudio", cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "listAudio", fetch = FetchType.EAGER)
     @JsonIgnoreProperties("listAudio")
     private Set<PlayList> playLists;
 
     public Audio() {
     }
 
-    public Audio(String name, Long fileId) {
+    public Audio(String name, FileAud file) {
         this.name = name;
-        this.fileId = fileId;
+        this.file = file;
         tags = new HashSet<>();
     }
 

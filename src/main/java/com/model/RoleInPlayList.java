@@ -6,40 +6,26 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @ApiModel
 @Data
 @Entity
 public class RoleInPlayList {
 
-    @ApiModelProperty
-    @Id
-    @GeneratedValue
-    private Long id;
+    @EmbeddedId
+    private RoleInPlayListId idComp;
 
     @ApiModelProperty
     @Enumerated(EnumType.ORDINAL)
     private Role_PlayList playListRole;
 
-    @ApiModelProperty
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JsonIgnoreProperties("roleUserInPlayLists")
-    private PlayList playList;
-
-    @ApiModelProperty
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JsonIgnoreProperties("roleUserInPlayLists")
-    private User user;
 
     public RoleInPlayList() {
     }
 
-    public boolean equals(RoleInPlayList roleInPlayList) {
-        return id.equals(roleInPlayList.getId());
-    }
-
-    public int hashCode() {
-        return Long.hashCode(id);
+    public RoleInPlayList(RoleInPlayListId roleInPlayListId) {
+        this.idComp = roleInPlayListId;
     }
 
 }

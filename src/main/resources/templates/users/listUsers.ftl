@@ -20,7 +20,7 @@
                     <#list user.roles as role> ${role.name}; </#list>
                 </td>
                 <td>
-                    <form action="/admin/users" method="post">
+                    <form action="/admin/deleteUser" method="post">
                         <input type="hidden" name="userId" value="${user.id}"/>
                         <input type="hidden" name="action" value="delete"/>
                         <button type="submit">Delete</button>

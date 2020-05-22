@@ -9,7 +9,8 @@ public enum Role_PlayList {
     ROLE_OWNER(4, "OWNER"),
     ROLE_ADMIN(3, "ADMIN"),
     ROLE_MODERATOR(2, "MODERATOR"),
-    ROLE_USER(1, "USER");
+    ROLE_USER(1, "USER"),
+    ROLE_NONE(0, "NONE");
 
     private int id;
 

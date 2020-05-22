@@ -2,8 +2,10 @@ package com.service;
 
 import com.exceptions.NotFoundDataBaseException;
 import com.model.Audio;
+import com.model.FileAud;
 import com.model.Tag;
 import com.repository.AudioRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,6 +14,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+@AllArgsConstructor
 @Service
 public class AudioService {
 
@@ -21,28 +24,8 @@ public class AudioService {
 
     private TagService tagService;
 
-    public AudioService(AudioRepository repository, FileService fileService, TagService tagService) {
-        this.repository = repository;
-        this.fileService = fileService;
-        this.tagService = tagService;
-    }
-
-    public boolean saveAudio(Audio audio) {
+    public void saveAudio(Audio audio) {
         repository.save(audio);
-        return true;
-    }
-
-    public boolean saveAudio(Audio audio, Set<Tag> tags) {
-
-        Audio audioFromDB = repository.findByName(audio.getName());
-
-        if (audioFromDB != null) {
-            return false;
-        }
-
-        audio.setTags(tags);
-        repository.save(audio);
-        return true;
     }
 
     public List<Audio> getAll() {
@@ -57,25 +40,20 @@ public class AudioService {
         }
     }
 
-    public Audio foundAudioByName(String name) {
+    public Audio findAudioByName(String name) {
         return repository.findByName(name);
     }
 
-    public boolean deleteAudio(Long id) {
-        if (repository.findById(id).isPresent()) {
-            repository.deleteById(id);
-            return true;
-        }
-        return false;
+    public void deleteAudio(Long id) {
+        repository.deleteById(id);
     }
 
-    public boolean uploadAudio(String name, MultipartFile file) throws IOException {
-        if (Objects.requireNonNull(file.getContentType()).equals("audio/mpeg")) {
-            Audio newAudio = new Audio(name, fileService.uploadFile(file));
+    public void uploadAudio(String name, MultipartFile file) throws IOException {
+        if (Objects.requireNonNull(file.getContentType()).contains("audio")) {
+            FileAud newFile = fileService.uploadFile(file);
+            Audio newAudio = new Audio(name, newFile);
             repository.save(newAudio);
-            return true;
         }
-        return false;
     }
 
     public void addTagToAudio(long audioId, long tagId) {

@@ -1,26 +1,31 @@
 package com.service;
 
 import com.model.RoleInPlayList;
+import com.model.Role_PlayList;
 import com.repository.RoleInPlayListRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+@AllArgsConstructor
 @Service
 public class RoleInPlayListsService {
 
     private RoleInPlayListRepository repository;
 
-    public RoleInPlayListsService(RoleInPlayListRepository repository) {
-        this.repository = repository;
-    }
-
-    public boolean saveRole(RoleInPlayList roleInPlayList) {
+    public void saveRole(RoleInPlayList roleInPlayList) {
         repository.save(roleInPlayList);
-        return true;
     }
 
-    public boolean deleteRole(RoleInPlayList roleInPlayList) {
+    public void deleteRole(RoleInPlayList roleInPlayList) {
         repository.delete(roleInPlayList);
-        return true;
+    }
+
+    public RoleInPlayList getUserRoleInPlayList(Long userId, Long playListId) {
+        return repository.findByUser_idAndPlayList_id(userId, playListId).orElseGet(() -> {
+            RoleInPlayList role = new RoleInPlayList();
+            role.setPlayListRole(Role_PlayList.ROLE_NONE);
+            return role;
+        });
     }
 
 }

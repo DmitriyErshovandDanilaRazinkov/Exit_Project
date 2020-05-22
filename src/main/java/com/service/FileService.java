@@ -2,8 +2,11 @@ package com.service;
 
 import com.model.FileAud;
 import com.repository.FileRepository;
+import lombok.AllArgsConstructor;
+import net.bytebuddy.asm.Advice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.acls.model.NotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,25 +33,19 @@ public class FileService {
     }
 
     public FileAud foundFileById(long id) {
-        if (repository.findById(id).isPresent()) {
-            return repository.findById(id).get();
-        }
-        return null;
+        return repository.findById(id).orElseThrow(() -> new NotFoundException("Файл не найден"));
     }
 
-    public boolean deleteFile(Long id) {
-        if (repository.findById(id).isPresent()) {
-            File file = new File(uploadPath + '/' + repository.findById(id).get().getName());
-            repository.deleteById(id);
+    public void deleteFile(Long id) {
+        File file = new File(uploadPath + '/' + repository.findById(id).orElseThrow(() ->
+                new NotFoundException("Файл не найден")).getName());
 
-            if (!file.delete()) {
-                return false;
-            }
-        }
-        return false;
+        file.delete();
+
+        repository.deleteById(id);
     }
 
-    public Long uploadFile(MultipartFile file) throws IOException {
+    public FileAud uploadFile(MultipartFile file) throws IOException {
         if (file != null) {
 
             File uploadDir = new File(uploadPath);
@@ -66,9 +63,13 @@ public class FileService {
 
             FileAud newFile = new FileAud(resultFileName, file.getOriginalFilename());
             repository.save(newFile);
-            return newFile.getId();
+            return newFile;
         } else {
-            return (long) -1;
+            throw new NullPointerException("Файл пустой");
         }
+    }
+
+    public void saveFile(FileAud file) {
+        repository.save(file);
     }
 }

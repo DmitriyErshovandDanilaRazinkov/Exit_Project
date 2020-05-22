@@ -6,12 +6,15 @@ import com.service.TagService;
 import com.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+@AllArgsConstructor
 @Api
 @Controller
+@RequestMapping("/admin")
 public class AdminController {
 
     private UserService userService;
@@ -22,66 +25,57 @@ public class AdminController {
 
     private TagService tagService;
 
-    public AdminController(UserService userService, FileService fileService, AudioService audioService, TagService tagService) {
-        this.userService = userService;
-        this.fileService = fileService;
-        this.audioService = audioService;
-        this.tagService = tagService;
-    }
-
     @ApiOperation("Главная страница админа")
-    @GetMapping("/admin")
+    @GetMapping("")
     public String getAdminPage() {
         return "/admins/admin";
     }
 
     //Работа спользователями
     @ApiOperation("Показывает лист пользователей")
-    @GetMapping("/admin/users")
+    @GetMapping("/users")
     public String userList(Model model) {
         model.addAttribute("allUsers", userService.allUsers());
         return "/users/listUsers";
     }
 
     @ApiOperation("Удаляет пользователя")
-    @PostMapping("/admin/users")
+    @PostMapping("/deleteUser")
     public String deleteUser(@RequestParam(defaultValue = "") Long userId,
-                             @RequestParam(defaultValue = "") String action,
-                             Model model) {
+                             @RequestParam(defaultValue = "") String action) {
         if (action.equals("delete")) {
             userService.deleteUser(userId);
         }
-        return userList(model);
+        return "redirect:/admin/users";
     }
 
     @ApiOperation("Показывает пользователя по id")
-    @GetMapping("/admin/getUser/{userId}")
+    @GetMapping("/getUser/{userId}")
     public String getUser(@PathVariable("userId") Long userId, Model model) {
-        model.addAttribute("allUsers", userService.userGetList(userId));
+        model.addAttribute("allUsers", userService.findUserById(userId));
         return "/users/listUsers";
     }
 
     //Работа с файлами
     @ApiOperation("Показывает лист файлов")
-    @GetMapping("/admin/files")
+    @GetMapping("/files")
     public String fileList(Model model) {
         model.addAttribute("files", fileService.getAll());
         return "/files/listFiles1";
     }
 
     @ApiOperation("Удаляет файл")
-    @PostMapping("/admin/files")
+    @PostMapping("/deleteFile")
     public String deleteFile(@RequestParam(defaultValue = "") Long fileId,
-                             @RequestParam(defaultValue = "") String action,
-                             Model model) {
+                             @RequestParam(defaultValue = "") String action) {
         if (action.equals("delete")) {
             fileService.deleteFile(fileId);
         }
-        return fileList(model);
+        return "redirect:/admin/files";
     }
 
     @ApiOperation("Показывает файл по id")
-    @GetMapping("/admin/getFile/{fileId}")
+    @GetMapping("/getFile/{fileId}")
     public String getFile(@PathVariable("fileId") Long fileId, Model model) {
         model.addAttribute("files", fileService.foundFileById(fileId));
         return "/files/listFiles1";
@@ -89,25 +83,24 @@ public class AdminController {
 
     //Работа с аудио
     @ApiOperation("Показывает все аудио")
-    @GetMapping("/admin/audios")
+    @GetMapping("/audios")
     public String audioList(Model model) {
         model.addAttribute("audios", audioService.getAll());
         return "/audios/listAudios";
     }
 
     @ApiOperation("Удаляет аудио")
-    @PostMapping("/admin/audios")
+    @PostMapping("/deleteAudio")
     public String deleteAudio(@RequestParam(defaultValue = "") Long audioId,
-                              @RequestParam(defaultValue = "") String action,
-                              Model model) {
+                              @RequestParam(defaultValue = "") String action) {
         if (action.equals("delete")) {
             audioService.deleteAudio(audioId);
         }
-        return audioList(model);
+        return "redirect:/admin/audios";
     }
 
     @ApiOperation("Аудио по id")
-    @GetMapping("/admin/audio/{audioId}")
+    @GetMapping("/audio/{audioId}")
     public String getAudio(@PathVariable Long audioId, Model model) {
         model.addAttribute("audio", audioService.foundAudioById(audioId));
         model.addAttribute("tagList", tagService.getAll());
@@ -115,7 +108,7 @@ public class AdminController {
     }
 
     @ApiOperation("Добавление тэга к аудио")
-    @GetMapping("/admin/audios/{audioId}/{tagId}")
+    @GetMapping("/audios/{audioId}/{tagId}")
     public String addTagToAudio(@PathVariable long audioId, @PathVariable long tagId, Model model) {
         audioService.addTagToAudio(audioId, tagId);
         return getAudio(audioId, model);
@@ -123,33 +116,27 @@ public class AdminController {
 
     //Работа с тэгами
     @ApiOperation("Показывает лист тэгов")
-    @GetMapping("/admin/tags")
+    @GetMapping("/tags")
     public String tagList(Model model) {
         model.addAttribute("tags", tagService.getAll());
         return "/tags/listTags";
     }
 
     @ApiOperation("Удаляет тэг")
-    @PostMapping("/admin/tags")
-    public String deleteTag(@RequestParam(defaultValue = "") Long tagId,
-                            @RequestParam(defaultValue = "") String action,
-                            Model model) {
-        if (action.equals("delete")) {
-            if (tagService.deleteTag(tagId)) {
-                return "mainPage";
-            }
-        }
-        return tagList(model);
+    @PostMapping("/deleteTag")
+    public String deleteTag(@RequestParam(defaultValue = "") Long tagId) {
+        tagService.deleteTag(tagId);
+        return "redirect:/admin/tags";
     }
 
-    @PostMapping("/admin/addTag")
-    public String addTag(@RequestParam String name, Model model) {
+    @PostMapping("/addTag")
+    public String addTag(@RequestParam String name) {
         tagService.addTag(name);
-        return tagList(model);
+        return "redirect:/admin/tags";
     }
 
     @ApiOperation("Показывает тэг по id")
-    @GetMapping("/admin/getTag/{tagId}")
+    @GetMapping("/getTag/{tagId}")
     public String getTag(@PathVariable("tagId") Long tagId, Model model) {
         model.addAttribute("tags", tagService.foundTagById(tagId));
         return "/tags/listTags";

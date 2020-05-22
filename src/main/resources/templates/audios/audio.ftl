@@ -7,14 +7,14 @@
             <td>ID</td>
             <td>Name</td>
             <td>Tags</td>
-            <tg>FileId</tg>
+            <td>FileId</td>
         </tr>
         </thead>
         <tr>
             <td>${audio.id}</td>
             <td>${audio.name}</td>
             <td><#list audio.tags as tag>${tag.id}:${tag.name};</#list></td>
-            <td>${audio.id}</td>
+            <td>${audio.file.id}</td>
         </tr>
     </table>
 
@@ -28,6 +28,7 @@
                     ${tag.name}
                 </a>
             </#if>
+        <#else>
         </#list>
     </div>
 </@common.page>

@@ -4,6 +4,7 @@ import com.model.Tag;
 import com.service.TagService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,15 +13,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
+@AllArgsConstructor
 @Api
 @Controller
 public class TagController {
 
     private TagService service;
-
-    public TagController(TagService service) {
-        this.service = service;
-    }
 
     @ApiOperation("Получение списка тэгов")
     @GetMapping("/tags")

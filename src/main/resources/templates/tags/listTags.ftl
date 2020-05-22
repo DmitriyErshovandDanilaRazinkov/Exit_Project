@@ -13,7 +13,7 @@
                 <td><b>${tag.id}</b></td>
                 <td><span>${tag.name}</span></td>
                 <td>
-                    <form action="/admin/tags" method="post">
+                    <form action="/admin/deleteTag" method="post">
                         <input type="hidden" name="tagId" value="${tag.id}"/>
                         <input type="hidden" name="action" value="delete"/>
                         <button type="submit">Delete</button>

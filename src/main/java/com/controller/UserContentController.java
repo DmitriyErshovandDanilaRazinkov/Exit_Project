@@ -1,17 +1,20 @@
 package com.controller;
 
+import com.model.DTO.user.UserPageTo;
 import com.model.Role_PlayList;
 import com.model.User;
 import com.service.AudioService;
 import com.service.PlayListService;
 import com.service.UserService;
 import io.swagger.annotations.Api;
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 
+@AllArgsConstructor
 @Api
 @Controller
 public class UserContentController {
@@ -22,26 +25,24 @@ public class UserContentController {
 
     private AudioService audioService;
 
-    public UserContentController(UserService userService, PlayListService playListService, AudioService audioService) {
-        this.userService = userService;
-        this.playListService = playListService;
-        this.audioService = audioService;
-    }
-
     @GetMapping("/user")
     public String getUserPage(Authentication authentication, Model model) {
-            User user = userService.findUserById(((User) authentication.getPrincipal()).getId());
-            model.addAttribute("user", user);
-            return "users/userPage";
+        UserPageTo pageTo = new UserPageTo();
+
+        pageTo.setUser(userService.findUserById(((User) authentication.getPrincipal()).getId()));
+        pageTo.setPlayLists(playListService.getPlayListsByUser(pageTo.getUser().getId()));
+        model.addAttribute("pageTo", pageTo);
+
+        return "users/userPage";
     }
 
-    @PostMapping("/user")
+    @PostMapping("/addPlayList")
     public String createNewPlayList(@RequestParam String name,
                                     @RequestParam(defaultValue = "false") boolean isPrivate,
                                     Authentication authentication, Model model) {
-            User user = (User) authentication.getPrincipal();
-            playListService.addPlayList(user.getId(), name, isPrivate);
-        return getUserPage(authentication, model);
+        User user = (User) authentication.getPrincipal();
+        playListService.addPlayList(user.getId(), name, isPrivate);
+        return "redirect:/user";
     }
 
     @GetMapping("/audio")
@@ -55,7 +56,7 @@ public class UserContentController {
     @GetMapping("/audio/addInPlayList/{id}")
     public String addInPlayList(@PathVariable("id") Long id, Authentication authentication, Model model) {
 
-        model.addAttribute("playLists", userService.getUserList(((User) authentication.getPrincipal()).getId()));
+        model.addAttribute("playLists", playListService.getPlayListsByUser(((User) authentication.getPrincipal()).getId()));
 
         model.addAttribute("result", "");
 
@@ -73,7 +74,7 @@ public class UserContentController {
 
         playListService.addAudio(playListId, id);
 
-        model.addAttribute("playLists", userService.getUserList(((User) authentication.getPrincipal()).getId()));
+        model.addAttribute("playLists", playListService.getPlayListsByUser(((User) authentication.getPrincipal()).getId()));
 
         model.addAttribute("result", "Аудио добавлено");
 

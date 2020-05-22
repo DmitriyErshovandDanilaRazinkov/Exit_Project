@@ -3,26 +3,39 @@
 <@common.page>
 
     <div>
-        ${user.id}
+        ${pageTo.user.id}
     </div>
     <div>
-        ${user.username}
+        ${pageTo.user.username}
     </div>
     <div>
-        <form method="post" enctype="multipart/form-data">
+        Cash: ${pageTo.user.cash}
+    </div>
+    <#if pageTo.user.premium>
+        <div>
+            End premium: ${pageTo.user.endPremium}
+        </div>
+    <#else>
+        <div>
+            <a href="/store/premium">Купить премиум</a>
+        </div>
+    </#if>
+    <div>
+        <form method="post" action="/addPlayList" enctype="multipart/form-data">
             <input name="name" type="text">
             <input name="isPrivate" type="checkbox">
             <button type="submit">Добавить</button>
         </form>
     </div>
 
+    <h3>
+        Плейлисты
+    </h3>
     <table>
-        <#list user.playLists as playList>
-            <div>
-                <tr>
-                    <td><a href="/playLists/${playList.id}">${playList.name}</a></td>
-                </tr>
-            </div>
+        <#list pageTo.playLists as playList>
+            <tr>
+                <td><a href="/playLists/${playList.id}">${playList.name}</a></td>
+            </tr>
         </#list>
     </table>
 

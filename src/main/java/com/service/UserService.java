@@ -5,6 +5,7 @@ import com.model.*;
 import com.repository.RoleRepository;
 import com.repository.UserRepository;
 
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -13,10 +14,10 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.validation.constraints.Null;
 import java.util.Date;
 import java.util.List;
 
+@AllArgsConstructor
 @Service
 public class UserService implements UserDetailsService {
 
@@ -27,13 +28,9 @@ public class UserService implements UserDetailsService {
 
     private RoleRepository roleRepository;
 
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private RoleInPlayListsService roleInPlayListsService;
 
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-    }
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String username) {
@@ -47,11 +44,7 @@ public class UserService implements UserDetailsService {
     }
 
     public User findUserById(Long id) {
-        if (userRepository.findById(id).isPresent()) {
-            return userRepository.findById(id).get();
-        } else {
-            throw new NotFoundDataBaseException("Пользователь не найден");
-        }
+        return userRepository.findById(id).orElseThrow(() -> new NotFoundDataBaseException("Пользователь не найден"));
     }
 
     public List<User> allUsers() {
@@ -74,36 +67,18 @@ public class UserService implements UserDetailsService {
         return true;
     }
 
-    public List<PlayList> getUserList(Long id) {
-        return findUserById(id).getPlayLists();
-    }
 
-    public boolean saveUser(User user) {
+    public void saveUser(User user) {
         userRepository.save(user);
-        return true;
     }
 
-    public boolean saveUser(Long id) {
-        userRepository.save(findUserById(id));
-        return true;
+    public void deleteUser(Long userId) {
+        userRepository.deleteById(userId);
     }
 
-    public boolean deleteUser(Long userId) {
-        if (userRepository.findById(userId).isPresent()) {
-            userRepository.deleteById(userId);
-            return true;
-        }
-
-        return false;
-    }
-
-    public List<User> userGetList(Long idMin) {
-        return em.createQuery("SELECT u FROM User u WHERE u.id > :paramId", User.class)
-                .setParameter("paramId", idMin).getResultList();
-    }
 
     public boolean checkUserRights(Long userId, Long playListId, Role_PlayList role) {
-        return findUserById(userId).getRoleInPlayLists().get(playListId).getPlayListRole().compare(role);
+        return roleInPlayListsService.getUserRoleInPlayList(userId, playListId).getPlayListRole().compare(role);
     }
 
     public boolean buyPremium(Long userId, Long period, double cost) {
@@ -137,5 +112,9 @@ public class UserService implements UserDetailsService {
         nowUser.setCash(nowUser.getCash() + addCash);
 
         saveUser(nowUser);
+    }
+
+    public List<User> getUsersByPlayList(Long id) {
+        return userRepository.getAllByPlayList(id);
     }
 }

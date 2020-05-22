@@ -44,20 +44,14 @@ public class User implements UserDetails {
     private String passwordConfirm;
 
     @ApiModelProperty
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JsonIgnoreProperties("user")
     private Set<Role> roles = new HashSet<>();
 
     @ApiModelProperty
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnoreProperties("users")
-    private List<PlayList> playLists = new ArrayList<>();
-
-    @ApiModelProperty
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @MapKeyColumn(name = "role_in_play_lists_key")
+    @OneToMany(mappedBy = "idComp.user", fetch = FetchType.LAZY)
     @JsonIgnoreProperties("user")
-    private Map<Long, RoleInPlayList> roleInPlayLists = new HashMap<>(); // Long - id плейлиста
+    private Set<RoleInPlayList> roleInPlayLists = new HashSet<>();
 
     public User() {
     }

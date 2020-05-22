@@ -30,17 +30,12 @@ public class PlayList {
     private String joinCode;
 
     @ApiModelProperty
-    @ManyToMany(mappedBy = "playLists", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JsonIgnoreProperties("playLists")
-    private Set<User> users = new HashSet<>();
-
-    @ApiModelProperty
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JsonIgnoreProperties("playLists")
     private Set<Audio> listAudio = new HashSet<>();
 
     @ApiModelProperty
-    @OneToMany(mappedBy = "playList", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "idComp.playList", fetch = FetchType.EAGER)
     @JsonIgnoreProperties("playList")
     private Set<RoleInPlayList> roleInPlayLists = new HashSet<>();
 

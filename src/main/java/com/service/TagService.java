@@ -3,23 +3,20 @@ package com.service;
 import com.exceptions.NotFoundDataBaseException;
 import com.model.Tag;
 import com.repository.TagRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@AllArgsConstructor
 @Service
 public class TagService {
 
     private TagRepository repository;
 
-    public TagService(TagRepository repository) {
-        this.repository = repository;
-    }
 
-    public boolean addTag(String name) {
-        Tag newTag = new Tag(name);
-        repository.save(newTag);
-        return true;
+    public void addTag(String name) {
+        repository.save(new Tag(name));
     }
 
     public List<Tag> getAll() {
@@ -27,18 +24,10 @@ public class TagService {
     }
 
     public Tag foundTagById(long id) {
-        if (repository.findById(id).isPresent()) {
-            return repository.findById(id).get();
-        } else {
-            throw new NotFoundDataBaseException("Тэг не найден");
-        }
+        return repository.findById(id).orElseThrow(() -> new NotFoundDataBaseException("Тэг не найден"));
     }
 
-    public boolean deleteTag(Long id) {
-        if (repository.findById(id).isPresent()) {
-            repository.deleteById(id);
-            return true;
-        }
-        return false;
+    public void deleteTag(Long id) {
+        repository.deleteById(id);
     }
 }

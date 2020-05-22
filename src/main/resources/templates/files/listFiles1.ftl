@@ -16,7 +16,7 @@
                 <td><span>${file.originalName}</span></td>
 
                 <td>
-                    <form action="/admin/files" method="post">
+                    <form action="/admin/deleteFile" method="post">
                         <input type="hidden" name="fileId" value="${file.id}"/>
                         <input type="hidden" name="action" value="delete"/>
                         <a href="/admin/download/{file.name}">скачать</a>

@@ -23,7 +23,7 @@ public class Role implements GrantedAuthority {
 
     @ApiModelProperty
     @Transient
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "roles")
+    @ManyToMany(mappedBy = "roles")
     @JsonIgnoreProperties("role")
     private Set<User> users;
 

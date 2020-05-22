@@ -3,7 +3,7 @@
 <@common.page>
 
     <div>
-        <a href="/playLists/${playListId}/users"><-Назад</a>
+        <a href="/playLists/${pageTo.playListId}/users"><-Назад</a>
     </div>
 
     <table>
@@ -13,7 +13,7 @@
             <td>Role</td>
         </tr>
         </thead>
-        <#list listUserWithRole as userWithRole>
+        <#list pageTo.roleInPlayListList as userWithRole>
             <tr>
                 <td>${userWithRole.user.username}</td>
                 <td>${userWithRole.playListRole.getName()}</td>

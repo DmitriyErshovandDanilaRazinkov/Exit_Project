@@ -3,6 +3,7 @@ package com.controller;
 import com.model.Audio;
 import com.service.AudioService;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,14 +13,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 
+@AllArgsConstructor
 @Controller
 public class AudioController {
 
     private AudioService service;
-
-    public AudioController(AudioService service) {
-        this.service = service;
-    }
 
     @ApiOperation("Получение списка аудио")
     @GetMapping("/audios")

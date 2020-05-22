@@ -4,14 +4,15 @@ import com.exceptions.DontHaveRightsException;
 import com.exceptions.NotFoundDataBaseException;
 import com.model.*;
 import com.repository.PlayListRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 import static java.util.UUID.randomUUID;
 
+@AllArgsConstructor
 @Service
 public class PlayListService {
 
@@ -23,56 +24,33 @@ public class PlayListService {
 
     private RoleInPlayListsService roleInPlayListsService;
 
-    public PlayListService(PlayListRepository repository, UserService userService, AudioService audioService, RoleInPlayListsService roleInPlayListsService) {
-        this.repository = repository;
-        this.userService = userService;
-        this.audioService = audioService;
-        this.roleInPlayListsService = roleInPlayListsService;
-    }
-
-    public boolean savePlayList(PlayList playList) {
+    public void savePlayList(PlayList playList) {
         repository.save(playList);
-        return true;
     }
 
-    public boolean addPlayList(long ownerId, String name, boolean isPrivate) {
+    public void addPlayList(Long ownerId, String name, boolean isPrivate) {
         User owner = userService.findUserById(ownerId);
+
         PlayList newPlayList = new PlayList(name, isPrivate);
-
-        RoleInPlayList role = new RoleInPlayList();
-        role.setPlayList(newPlayList);
-        role.setUser(owner);
-        role.setPlayListRole(Role_PlayList.ROLE_OWNER);
-
-        roleInPlayListsService.saveRole(role);
-
-        newPlayList.getUsers().add(owner);
-        newPlayList.getRoleInPlayLists().add(role);
-
-        savePlayList(newPlayList);
-
+        repository.save(newPlayList);
         newPlayList.setJoinCode(newPlayList.getId() + "" + randomUUID().toString().substring(0, 8));
 
-        owner.getPlayLists().add(newPlayList);
-        owner.getRoleInPlayLists().put(newPlayList.getId(), role);
+        RoleInPlayList role = new RoleInPlayList(new RoleInPlayListId(owner, newPlayList));
+        role.setPlayListRole(Role_PlayList.ROLE_OWNER);
+        roleInPlayListsService.saveRole(role);
+
+        newPlayList.getRoleInPlayLists().add(role);
+        repository.save(newPlayList);
+
+        owner.getRoleInPlayLists().add(role);
 
         userService.saveUser(owner);
         repository.save(newPlayList);
         roleInPlayListsService.saveRole(role);
-
-        return true;
     }
 
-    public boolean setPrivate(long id, boolean newPrivate) throws NotFoundDataBaseException {
-        if (repository.findById(id).isPresent()) {
-            repository.findById(id).get().setPrivate(newPrivate);
-            return true;
-        } else {
-            throw new NotFoundDataBaseException("ПлейЛист не найден");
-        }
-    }
 
-    public boolean addAudio(long id, long audioId) throws NotFoundDataBaseException {
+    public void addAudio(long id, long audioId) {
         if (repository.findById(id).isPresent()) {
 
             Audio nowAudio = audioService.foundAudioById(audioId);
@@ -84,17 +62,14 @@ public class PlayListService {
 
             repository.save(nowPlayList);
             audioService.saveAudio(nowAudio);
-
-            return true;
         } else {
             throw new NotFoundDataBaseException("ПлейЛист не найден");
         }
     }
 
-    public boolean deleteAudioFromPlayList(long id, long audioId) throws NotFoundDataBaseException {
+    public void deleteAudioFromPlayList(long id, long audioId) {
         if (repository.findById(id).isPresent()) {
             repository.findById(id).get().getListAudio().remove(audioService.foundAudioById(audioId));
-            return true;
         } else {
             throw new NotFoundDataBaseException("ПлейЛист не найден");
         }
@@ -112,75 +87,42 @@ public class PlayListService {
         }
     }
 
-    public boolean addNewUserToPlayList(Long playListId, Long userId) {
-        return addNewUserToPlayList(findPlayListById(playListId), userId);
+    public void addNewUserToPlayList(Long playListId, Long userId) {
+        addNewUserToPlayList(findPlayListById(playListId), userId);
     }
 
-    public boolean addNewUserToPlayList(PlayList nowPlayList, Long userId) {
+    public void addNewUserToPlayList(PlayList nowPlayList, Long userId) {
         User user = userService.findUserById(userId);
 
-        RoleInPlayList role = new RoleInPlayList();
-        role.setPlayList(nowPlayList);
-        role.setUser(user);
+        RoleInPlayList role = new RoleInPlayList(new RoleInPlayListId(user, nowPlayList));
         role.setPlayListRole(Role_PlayList.ROLE_USER);
 
         roleInPlayListsService.saveRole(role);
-
-        nowPlayList.getUsers().add(user);
         nowPlayList.getRoleInPlayLists().add(role);
 
-        user.getPlayLists().add(nowPlayList);
-        user.getRoleInPlayLists().put(nowPlayList.getId(), role);
+        user.getRoleInPlayLists().add(role);
 
         userService.saveUser(user);
         repository.save(nowPlayList);
         roleInPlayListsService.saveRole(role);
-
-        return true;
     }
 
     public Long joinUser(String joinCode, Long userId) {
         PlayList playList = repository.findByJoinCode(joinCode);
-        addNewUserToPlayList(playList.getId(), userId);
-        repository.save(playList);
+        if (roleInPlayListsService.getUserRoleInPlayList(userId, playList.getId())
+                .getPlayListRole().compareUnder(Role_PlayList.ROLE_NONE)) {
+            addNewUserToPlayList(playList.getId(), userId);
+            repository.save(playList);
+        }
         return playList.getId();
     }
 
-    public boolean deleteUser(Long playListId, Long userId) {
-        User user = userService.findUserById(userId);
-        PlayList nowPlayList = findPlayListById(playListId);
-
-        RoleInPlayList role = user.getRoleInPlayLists().get(playListId);
-
-        role.setPlayListRole(null);
-        role.setPlayList(null);
-        role.setUser(null);
-
-        roleInPlayListsService.saveRole(role);
-
-        nowPlayList.getUsers().remove(user);
-        nowPlayList.getRoleInPlayLists().remove(role);
-
-        user.getPlayLists().remove(nowPlayList);
-        user.getRoleInPlayLists().remove(nowPlayList.getId());
-
-        userService.saveUser(user);
-        repository.save(nowPlayList);
-        roleInPlayListsService.deleteRole(role);
-
-        return true;
+    public void deleteUser(Long playListId, Long userId) {
+        roleInPlayListsService.deleteRole(roleInPlayListsService.getUserRoleInPlayList(userId, playListId));
     }
 
-    public boolean deletePlayList(Long id) {
-        if (repository.findById(id).isPresent()) {
-            repository.deleteById(id);
-            return true;
-        }
-        return false;
-    }
-
-    public boolean checkUser(PlayList nowPlayList, Long userId) {
-        return userService.findUserById(userId).getPlayLists().contains(nowPlayList);
+    public void deletePlayList(Long id) {
+        repository.deleteById(id);
     }
 
     public List<RoleInPlayList> getListWithAndUnderRole(Long id, Role_PlayList role) {
@@ -190,9 +132,9 @@ public class PlayListService {
                 .collect(Collectors.toList());
     }
 
-    public boolean changeUserRoleTo(Long playlistId, Long userId, Role_PlayList role_playList) {
+    public void changeUserRoleTo(Long playlistId, Long userId, Role_PlayList role_playList) {
 
-        RoleInPlayList role = userService.findUserById(userId).getRoleInPlayLists().get(playlistId);
+        RoleInPlayList role = roleInPlayListsService.getUserRoleInPlayList(userId, playlistId);
 
         if (role.getPlayListRole() == Role_PlayList.ROLE_OWNER) {
             throw new DontHaveRightsException("Никто не может влиять на владельца");
@@ -201,7 +143,9 @@ public class PlayListService {
         role.setPlayListRole(role_playList);
 
         roleInPlayListsService.saveRole(role);
+    }
 
-        return true;
+    public List<PlayList> getPlayListsByUser(Long id) {
+        return repository.getAllByWithPlayList(id);
     }
 }

@@ -3,22 +3,22 @@
 <@common.page>
 
     <div>
-        <a href="/playLists/${playListId}"><-Назад</a>
+        <a href="/playLists/${pageTo.playListId}"><-Назад</a>
     </div>
     <div>
-        Ссылка для приглашения : ${joinLink}
+        Ссылка для приглашения : ${pageTo.joinCode}
     </div>
 
-    <#if (nowUserRole.id >=3) >
-        <form action="/playLists/${playListId}/addUser" method="post" enctype="multipart/form-data">
+    <#if (pageTo.nowUserRole >=3) >
+        <form action="/playLists/${pageTo.playListId}/addUser" method="post" enctype="multipart/form-data">
             <input type="number" name="userId">
             <button type="submit">Добавить</button>
         </form>
-        <#if (nowUserRole.id ==4) >
-            <div><a href="/playLists/${playListId}/changeOwner">Поменять владельца</a></div>
+        <#if (pageTo.nowUserRole == 4) >
+            <div><a href="/playLists/${pageTo.playListId}/changeOwner">Поменять владельца</a></div>
         </#if>
-        <div><a href="/playLists/${playListId}/admins">Aдминистраторы</a></div>
-        <div><a href="/playLists/${playListId}/moderators">Модераторы</a></div>
+        <div><a href="/playLists/${pageTo.playListId}/admins">Aдминистраторы</a></div>
+        <div><a href="/playLists/${pageTo.playListId}/moderators">Модераторы</a></div>
     </#if>
 
     <table>
@@ -28,14 +28,15 @@
             <td>Role</td>
         </tr>
         </thead>
-        <#list listUserWithRole as userWithRole>
+        <#list pageTo.roleInPlayListList as userWithRole>
             <tr>
-                <td>${userWithRole.user.username}</td>
+                <td>${userWithRole.idComp.user.username}</td>
                 <td>${userWithRole.playListRole.getName()}</td>
                 <td>
-                    <#if (nowUserRole.id >=3)>
-                        <form action="/playLists/${playListId}/deleteUser" method="post" enctype="multipart/form-data">
-                            <input type="hidden" name="userId" value="${userWithRole.user.id}">
+                    <#if (pageTo.nowUserRole >=3)>
+                        <form action="/playLists/${pageTo.playListId}/deleteUser" method="post"
+                              enctype="multipart/form-data">
+                            <input type="hidden" name="userId" value="${userWithRole.idComp.user.id}">
                             <button type="submit">Удалить</button>
                         </form>
                     </#if>

@@ -22,7 +22,7 @@ public class Tag {
 
     @ApiModelProperty
     @Transient
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "tags")
+    @ManyToMany(mappedBy = "tags")
     @JsonIgnoreProperties("tag")
     private Set<Audio> audios;
 
@@ -32,7 +32,6 @@ public class Tag {
     public Tag(String name) {
         this.name = name;
     }
-
 
     public Tag(Long id, String name) {
         this.id = id;

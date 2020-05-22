@@ -15,7 +15,7 @@
             <tr>
                 <td><span>${audio.name}</span></td>
                 <td><#list audio.tags as tag>${tag.name};</#list></td>
-                <td><span><a href="/admin/files/${audio.getFileId()}">${audio.getFileId()}</a></span></td>
+                <td><span><a href="/admin/files/${audio.file.id}">${audio.file.id}</a></span></td>
                 <td>
                     <a href="/audio/addInPlayList/${audio.id}">Add in PlayList</a>
                 </td>
