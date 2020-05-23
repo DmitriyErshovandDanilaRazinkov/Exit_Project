@@ -1,5 +1,6 @@
 package com.controller;
 
+import com.model.Audio;
 import com.model.DTO.user.UserPageTo;
 import com.model.Role_PlayList;
 import com.model.User;
@@ -81,6 +82,20 @@ public class UserContentController {
         return "/playLists/addAudioInPlayList";
     }
 
+    @GetMapping("/user/audioPage/{audioId}")
+    public String getAudioPage(@PathVariable("audioId") Long audioId, Authentication authentication, Model model) {
+
+        Audio nowAudio = audioService.foundAudioById(audioId);
+        if (nowAudio.isPremium() && !(userService.checkUserPremium(((User) authentication.getPrincipal()).getId()))) {
+            model.addAttribute("exceptionText", "У Вас нет премиума");
+            return "/exception";
+        }
+
+        model.addAttribute("audio", nowAudio);
+
+        return "/audios/audioPage";
+    }
+
     @GetMapping("/store/premium")
     public String getBuyPremiumPage(Model model) {
         model.addAttribute("message", "");
@@ -122,6 +137,6 @@ public class UserContentController {
 
         playListService.deletePlayList(playListId);
 
-        return getUserPage(authentication, model);
+        return "redirect:/user";
     }
 }

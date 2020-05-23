@@ -5,7 +5,6 @@
     <table>
         <thead>
         <tr>
-            <td></td>
             <td>Name</td>
             <td>Tags</td>
             <td>Add in PlayList</td>
@@ -13,9 +12,8 @@
         </thead>
         <#list listAudio as audio>
             <tr>
-                <td><span>${audio.name}</span></td>
+                <td><a href="/user/audioPage/${audio.id}"><span>${audio.name}</span></td>
                 <td><#list audio.tags as tag>${tag.name};</#list></td>
-                <td><span><a href="/admin/files/${audio.file.id}">${audio.file.id}</a></span></td>
                 <td>
                     <a href="/audio/addInPlayList/${audio.id}">Add in PlayList</a>
                 </td>

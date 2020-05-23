@@ -125,11 +125,8 @@ public class PlayListService {
         repository.deleteById(id);
     }
 
-    public List<RoleInPlayList> getListWithAndUnderRole(Long id, Role_PlayList role) {
-        return findPlayListById(id).getRoleInPlayLists().stream()
-                .filter((RoleInPlayList role1) -> role1.getPlayListRole().compareUnder(role))
-                .sorted(Role_PlayList::compareTo)
-                .collect(Collectors.toList());
+    public List<RoleInPlayList> getListWithAndUnderRole(Long playListId, Role_PlayList role) {
+        return roleInPlayListsService.getUserWithRoleWereRoleUnder(playListId, role);
     }
 
     public void changeUserRoleTo(Long playlistId, Long userId, Role_PlayList role_playList) {

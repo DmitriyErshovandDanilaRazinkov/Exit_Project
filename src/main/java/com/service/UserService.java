@@ -117,4 +117,12 @@ public class UserService implements UserDetailsService {
     public List<User> getUsersByPlayList(Long id) {
         return userRepository.getAllByPlayList(id);
     }
+
+    public boolean checkUserPremium(Long id) {
+        User nowUser = findUserById(id);
+        if (!nowUser.isPremium()) return false;
+        Date nowTime = new Date();
+        nowUser.setPremium(!(nowTime.compareTo(nowUser.getEndPremium()) > 0));
+        return nowUser.isPremium();
+    }
 }

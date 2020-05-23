@@ -6,6 +6,8 @@ import com.repository.RoleInPlayListRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @AllArgsConstructor
 @Service
 public class RoleInPlayListsService {
@@ -28,4 +30,7 @@ public class RoleInPlayListsService {
         });
     }
 
+    public List<RoleInPlayList> getUserWithRoleWereRoleUnder(Long playListId, Role_PlayList role) {
+        return repository.getRoleWhereRoleUnder(playListId, role);
+    }
 }

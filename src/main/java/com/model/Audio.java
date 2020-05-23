@@ -23,6 +23,9 @@ public class Audio {
     private String name;
 
     @ApiModelProperty
+    private boolean premium;
+
+    @ApiModelProperty
     @OneToOne(fetch = FetchType.LAZY)
     private FileAud file;
 

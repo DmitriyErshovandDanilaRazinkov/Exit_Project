@@ -130,7 +130,7 @@ public class PlayListContentController {
         return "playLists/adminList";
     }
 
-    @PostMapping("playLists/{id}/addAdmin")
+    @PostMapping("/playLists/{id}/addAdmin")
     public String addAdmin(@PathVariable Long id, @RequestParam Long userId, Authentication authentication, Model model) {
 
         if (!userService.checkUserRights(((User) authentication.getPrincipal()).getId(), id, Role_PlayList.ROLE_OWNER)) {
@@ -143,7 +143,7 @@ public class PlayListContentController {
         return "redirect:/playLists/{id}/admins";
     }
 
-    @PostMapping("playLists/{id}/deleteAdmin")
+    @PostMapping("/playLists/{id}/deleteAdmin")
     public String deleteAdmin(@PathVariable Long id, @RequestParam Long userId, Authentication authentication, Model model) {
 
         if (!userService.checkUserRights(((User) authentication.getPrincipal()).getId(), id, Role_PlayList.ROLE_OWNER)) {
@@ -156,7 +156,7 @@ public class PlayListContentController {
         return "redirect:/playLists/{id}/admins";
     }
 
-    @GetMapping("playLists/{id}/moderators")
+    @GetMapping("/playLists/{id}/moderators")
     public String getModeratorPage(@PathVariable Long id, Authentication authentication, Model model) {
 
         if (!userService.checkUserRights(((User) authentication.getPrincipal()).getId(), id, Role_PlayList.ROLE_ADMIN)) {
@@ -173,7 +173,7 @@ public class PlayListContentController {
         return "playLists/moderatorList";
     }
 
-    @PostMapping("playLists/{id}/addModerator")
+    @PostMapping("/playLists/{id}/addModerator")
     public String addModerator(@PathVariable Long id, @RequestParam Long userId, Authentication authentication, Model model) {
 
         if (!userService.checkUserRights(((User) authentication.getPrincipal()).getId(), id, Role_PlayList.ROLE_ADMIN)) {
@@ -186,7 +186,7 @@ public class PlayListContentController {
         return "redirect:playLists/{id}/addModerator";
     }
 
-    @PostMapping("playLists/{id}/deleteModerator")
+    @PostMapping("/playLists/{id}/deleteModerator")
     public String deleteModerator(@PathVariable Long id, @RequestParam Long userId, Authentication authentication, Model model) {
 
         if (!userService.checkUserRights(((User) authentication.getPrincipal()).getId(), id, Role_PlayList.ROLE_ADMIN)) {
@@ -199,7 +199,7 @@ public class PlayListContentController {
         return "redirect:playLists/{id}/addModerator";
     }
 
-    @GetMapping("playLists/{id}/changeOwner")
+    @GetMapping("/playLists/{id}/changeOwner")
     public String getChangeOwnerPage(@PathVariable Long id, Authentication authentication, Model model) {
 
         if (!userService.checkUserRights(((User) authentication.getPrincipal()).getId(), id, Role_PlayList.ROLE_OWNER)) {
@@ -217,7 +217,7 @@ public class PlayListContentController {
         return "redirect:/playLists/{id}/admins";
     }
 
-    @GetMapping("playLists/join/{joinCode}")
+    @GetMapping("/playLists/join/{joinCode}")
     public String joinInPlayList(@PathVariable("joinCode") String joinCode, Authentication authentication, Model model) {
 
         return getUserPlayList(playListService.joinUser(joinCode, ((User) authentication.getPrincipal()).getId()),
