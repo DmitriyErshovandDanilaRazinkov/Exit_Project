@@ -1,22 +1,30 @@
 <#import "../parts/common.ftl" as common>
 
 <@common.page>
-
-    <div>
-        <form action="/store/addCash" method="post" enctype="multipart/form-data">
-            <button type="submit">Пополнить счет</button>
-        </form>
+    <div class = "container">
+        <div class = "my-5">
+            <div class="row">
+                <div class="col-sm">
+                    <div>
+                        <form action="/store/addCash" method="post" enctype="multipart/form-data">
+                            <button type="submit">Пополнить счет</button>
+                        </form>
+                    </div>
+                    <div class="green">
+                        ${message}
+                    </div>
+                </div>
+                <div class="col-sm">
+                    <div>
+                        <form action="/store/premium" method="post" enctype="multipart/form-data">
+                            <button type="submit">Bye premium</button>
+                        </form>
+                    </div>
+                    <div class="red">
+                        ${exception}
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div>
-        <form action="/store/premium" method="post" enctype="multipart/form-data">
-            <button type="submit">Bye premium</button>
-        </form>
-    </div>
-    <div class="green">
-        ${message}
-    </div>
-    <div class="red">
-        ${exception}
-    </div>
-
 </@common.page>
