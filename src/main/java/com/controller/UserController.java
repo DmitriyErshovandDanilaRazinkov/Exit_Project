@@ -1,13 +1,12 @@
 package com.controller;
 
-import com.model.User;
+import com.model.DTO.UserDetailsTo;
 import com.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,20 +20,20 @@ public class UserController {
 
     @ApiOperation("Получение списка пользователей")
     @GetMapping("/users")
-    public ResponseEntity<List<User>> getAllUsers() {
-        return ResponseEntity.ok(service.allUsers());
+    public ResponseEntity<List<UserDetailsTo>> getAllUsers() {
+        return ResponseEntity.status(HttpStatus.OK).body(service.allUsers());
     }
 
     @ApiOperation("Получение пользователя по id")
     @GetMapping("/users/{id}")
     public ResponseEntity<?> getUser(@PathVariable long id) {
-        return ResponseEntity.ok(service.findUserById(id));
+        return ResponseEntity.status(HttpStatus.OK).body(service.findUserToById(id));
     }
 
     @ApiOperation("Удаление пользователя")
     @DeleteMapping("/users/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable long id) {
         service.deleteUser(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

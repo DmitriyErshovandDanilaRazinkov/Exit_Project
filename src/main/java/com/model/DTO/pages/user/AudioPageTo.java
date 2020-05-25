@@ -1,4 +1,4 @@
-package com.model.DTO.user;
+package com.model.DTO.pages.user;
 
 import com.model.PlayList;
 

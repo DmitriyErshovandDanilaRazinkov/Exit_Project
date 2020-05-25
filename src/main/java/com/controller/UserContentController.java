@@ -1,7 +1,7 @@
 package com.controller;
 
 import com.model.Audio;
-import com.model.DTO.user.UserPageTo;
+import com.model.DTO.pages.user.UserPageTo;
 import com.model.Role_PlayList;
 import com.model.User;
 import com.service.AudioService;
@@ -14,10 +14,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.RolesAllowed;
+
 
 @AllArgsConstructor
 @Api
 @Controller
+@RolesAllowed({"USER", "ADMIN"})
 public class UserContentController {
 
     private UserService userService;
@@ -30,7 +33,7 @@ public class UserContentController {
     public String getUserPage(Authentication authentication, Model model) {
         UserPageTo pageTo = new UserPageTo();
 
-        pageTo.setUser(userService.findUserById(((User) authentication.getPrincipal()).getId()));
+        pageTo.setUser(UserService.getCurrentUser());
         pageTo.setPlayLists(playListService.getPlayListsByUser(pageTo.getUser().getId()));
         model.addAttribute("pageTo", pageTo);
 
@@ -40,9 +43,8 @@ public class UserContentController {
     @PostMapping("/addPlayList")
     public String createNewPlayList(@RequestParam String name,
                                     @RequestParam(defaultValue = "false") boolean isPrivate,
-                                    Authentication authentication, Model model) {
-        User user = (User) authentication.getPrincipal();
-        playListService.addPlayList(user.getId(), name, isPrivate);
+                                    Model model) {
+        playListService.addPlayList(UserService.getCurrentUser().getId(), name, isPrivate);
         return "redirect:/user";
     }
 
@@ -55,9 +57,9 @@ public class UserContentController {
     }
 
     @GetMapping("/audio/addInPlayList/{id}")
-    public String addInPlayList(@PathVariable("id") Long id, Authentication authentication, Model model) {
+    public String addInPlayList(@PathVariable("id") Long id, Model model) {
 
-        model.addAttribute("playLists", playListService.getPlayListsByUser(((User) authentication.getPrincipal()).getId()));
+        model.addAttribute("playLists", playListService.getPlayListsByUser(UserService.getCurrentUser().getId()));
 
         model.addAttribute("result", "");
 
@@ -68,14 +70,14 @@ public class UserContentController {
     public String addInPlayList(@PathVariable("id") Long id, @RequestParam("playListId") Long playListId,
                                 Authentication authentication, Model model) {
 
-        if (!userService.checkUserRights(((User) authentication.getPrincipal()).getId(), playListId, Role_PlayList.ROLE_MODERATOR)) {
+        if (!userService.checkUserRights(playListId, Role_PlayList.ROLE_MODERATOR)) {
             model.addAttribute("exceptionText", "Вы не имеете прав");
             return "exception";
         }
 
         playListService.addAudio(playListId, id);
 
-        model.addAttribute("playLists", playListService.getPlayListsByUser(((User) authentication.getPrincipal()).getId()));
+        model.addAttribute("playLists", playListService.getPlayListsByUser(UserService.getCurrentUser().getId()));
 
         model.addAttribute("result", "Аудио добавлено");
 
@@ -86,7 +88,7 @@ public class UserContentController {
     public String getAudioPage(@PathVariable("audioId") Long audioId, Authentication authentication, Model model) {
 
         Audio nowAudio = audioService.foundAudioById(audioId);
-        if (nowAudio.isPremium() && !(userService.checkUserPremium(((User) authentication.getPrincipal()).getId()))) {
+        if (nowAudio.isPremium() && !(userService.checkUserPremium())) {
             model.addAttribute("exceptionText", "У Вас нет премиума");
             return "/exception";
         }
@@ -128,9 +130,9 @@ public class UserContentController {
     }
 
     @PostMapping("playList/delete")
-    public String deletePlayList(@RequestParam Long playListId, Authentication authentication, Model model) {
+    public String deletePlayList(@RequestParam Long playListId, Model model) {
 
-        if (!userService.checkUserRights(((User) authentication.getPrincipal()).getId(), playListId, Role_PlayList.ROLE_OWNER)) {
+        if (!userService.checkUserRights(playListId, Role_PlayList.ROLE_OWNER)) {
             model.addAttribute("exceptionText", "Вы не имеете прав");
             return "exception";
         }

@@ -1,7 +1,7 @@
-package com.model.DTO.user;
+package com.model.DTO.pages.user;
 
+import com.model.DTO.UserDetailsTo;
 import com.model.PlayList;
-import com.model.User;
 import lombok.Data;
 
 import java.util.List;
@@ -9,6 +9,6 @@ import java.util.List;
 @Data
 public class UserPageTo {
 
-    private User user;
+    private UserDetailsTo user;
     private List<PlayList> playLists;
 }

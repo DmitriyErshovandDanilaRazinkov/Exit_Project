@@ -11,10 +11,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.RolesAllowed;
+
 @AllArgsConstructor
 @Api
 @Controller
 @RequestMapping("/admin")
+@RolesAllowed("ADMIN")
 public class AdminController {
 
     private UserService userService;
@@ -26,7 +29,7 @@ public class AdminController {
     private TagService tagService;
 
     @ApiOperation("Главная страница админа")
-    @GetMapping("")
+    @GetMapping
     public String getAdminPage() {
         return "/admins/admin";
     }
@@ -52,7 +55,7 @@ public class AdminController {
     @ApiOperation("Показывает пользователя по id")
     @GetMapping("/getUser/{userId}")
     public String getUser(@PathVariable("userId") Long userId, Model model) {
-        model.addAttribute("allUsers", userService.findUserById(userId));
+        model.addAttribute("allUsers", userService.findUserToById(userId));
         return "/users/listUsers";
     }
 

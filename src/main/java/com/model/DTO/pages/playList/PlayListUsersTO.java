@@ -1,5 +1,6 @@
 package com.model.DTO.pages.playList;
 
+import com.model.DTO.RoleInPlayListTo;
 import com.model.RoleInPlayList;
 
 import java.util.List;
@@ -11,7 +12,7 @@ public class PlayListUsersTO {
 
     private Long playListId;
 
-    private List<RoleInPlayList> roleInPlayListList;
+    private List<RoleInPlayListTo> roleInPlayListList;
 
     private Long NowUserRole;
 }

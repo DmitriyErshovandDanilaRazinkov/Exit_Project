@@ -1,9 +1,11 @@
 package com.controller;
 
+import com.model.DTO.PlayListTo;
 import com.model.PlayList;
 import com.service.PlayListService;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,14 +23,14 @@ public class PlayListController {
 
     @ApiOperation("Получение списка плей листов")
     @GetMapping("/playLists")
-    public ResponseEntity<List<PlayList>> getAllFiles() {
-        return ResponseEntity.ok(service.getAll());
+    public ResponseEntity<List<PlayListTo>> getAllFiles() {
+        return ResponseEntity.status(HttpStatus.FOUND).body(service.getAll());
     }
 
     @ApiOperation("Получение плей листа по id")
     @GetMapping("/playList/{id}")
     public ResponseEntity<?> getAudio(@PathVariable long id) {
-        return ResponseEntity.ok(service.findPlayListById(id));
+        return ResponseEntity.status(HttpStatus.FOUND).body(service.findPlayListToById(id));
     }
 
     @ApiOperation("Удаление плей листа")

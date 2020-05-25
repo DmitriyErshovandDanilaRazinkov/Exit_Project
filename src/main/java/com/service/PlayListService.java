@@ -3,11 +3,14 @@ package com.service;
 import com.exceptions.DontHaveRightsException;
 import com.exceptions.NotFoundDataBaseException;
 import com.model.*;
+import com.model.DTO.PlayListTo;
+import com.model.DTO.RoleInPlayListTo;
 import com.repository.PlayListRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.UUID.randomUUID;
@@ -23,10 +26,6 @@ public class PlayListService {
     private AudioService audioService;
 
     private RoleInPlayListsService roleInPlayListsService;
-
-    public void savePlayList(PlayList playList) {
-        repository.save(playList);
-    }
 
     public void addPlayList(Long ownerId, String name, boolean isPrivate) {
         User owner = userService.findUserById(ownerId);
@@ -67,6 +66,12 @@ public class PlayListService {
         }
     }
 
+    public Set<RoleInPlayListTo> getRoleInPlayLists(Long id) {
+        return findPlayListById(id).getRoleInPlayLists().stream()
+                .map(RoleInPlayListsService::roleInPlayListToDto)
+                .collect(Collectors.toSet());
+    }
+
     public void deleteAudioFromPlayList(long id, long audioId) {
         if (repository.findById(id).isPresent()) {
             repository.findById(id).get().getListAudio().remove(audioService.foundAudioById(audioId));
@@ -75,16 +80,18 @@ public class PlayListService {
         }
     }
 
-    public List<PlayList> getAll() {
-        return repository.findAll();
+    public List<PlayListTo> getAll() {
+        return repository.findAll().stream()
+                .map(PlayListService::playListToPlayListTo)
+                .collect(Collectors.toList());
     }
 
-    public PlayList findPlayListById(long id) {
-        if (repository.findById(id).isPresent()) {
-            return repository.findById(id).get();
-        } else {
-            throw new NotFoundDataBaseException("ПлейЛист не найден");
-        }
+    public PlayListTo findPlayListToById(Long id) {
+        return playListToPlayListTo(findPlayListById(id));
+    }
+
+    PlayList findPlayListById(Long id) {
+        return repository.findById(id).orElseThrow(() -> new NotFoundDataBaseException("ПлейЛист не найден"));
     }
 
     public void addNewUserToPlayList(Long playListId, Long userId) {
@@ -125,7 +132,7 @@ public class PlayListService {
         repository.deleteById(id);
     }
 
-    public List<RoleInPlayList> getListWithAndUnderRole(Long playListId, Role_PlayList role) {
+    public List<RoleInPlayListTo> getListWithAndUnderRole(Long playListId, Role_PlayList role) {
         return roleInPlayListsService.getUserWithRoleWereRoleUnder(playListId, role);
     }
 
@@ -144,5 +151,18 @@ public class PlayListService {
 
     public List<PlayList> getPlayListsByUser(Long id) {
         return repository.getAllByWithPlayList(id);
+    }
+
+    public static PlayListTo playListToPlayListTo(PlayList playList) {
+        PlayListTo playListTo = new PlayListTo();
+        playListTo.setId(playList.getId());
+        playListTo.setName(playList.getName());
+        playListTo.setJoinCode(playList.getJoinCode());
+        playListTo.setPrivate(playList.isPrivate());
+        return playListTo;
+    }
+
+    public List<Audio> getPlayListAudios(Long id) {
+        return findPlayListById(id).getListAudio();
     }
 }

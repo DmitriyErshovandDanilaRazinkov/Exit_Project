@@ -1,5 +1,20 @@
+<#macro secured roles=[]>
+    <#if currentUser??>
+        <#list roles as role>
+            <#if currentUser.role == role>
+                <#nested/>
+            </#if>
+        </#list>
+    </#if>
+</#macro>
+<#macro isNotLogged>
+    <#if currentUser??>
+    <#else>
+        <#nested/>
+    </#if>
+</#macro>
+
 <#macro page>
-    <#assign sec=JspTaglibs["http://www.springframework.org/security/tags"] />
 
     <!DOCTYPE html>
     <head>
@@ -41,24 +56,23 @@
                     </li>
                 </ul>
             </div>
-            <@sec.authorize access="!isAuthenticated()">
+            <@isNotLogged>
                 <div>
                     <a class="btn btn-success mr-sm-2" href="/login">Войти</a>
                     <a class="btn btn-success mr-sm-2" href="/registration">Зарегистрироваться</a>
                 </div>
-            </@sec.authorize>
-            <@sec.authorize access="isAuthenticated()">
+            </@isNotLogged>
+            <@secured ['ROLE_USER', 'ROLE_ADMIN']>
                 <a class="btn btn-danger mr-sm-2" href="/logout">Выйти</a>
-            </@sec.authorize>
-            <@sec.authorize access="hasRole('ROLE_ADMIN')">
+            </@secured>
+            <@secured ['ROLE_ADMIN']>
                 <div>
                     <a class="btn btn-blue mr-sm-2" href="/admin">Admin</a>
                 </div>
-            </@sec.authorize>
+            </@secured>
         </nav>
 
     </header>
-
 
     <#nested>
 

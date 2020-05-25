@@ -1,5 +1,6 @@
 package com.service;
 
+import com.model.DTO.FileTo;
 import com.model.FileAud;
 import com.repository.FileRepository;
 import lombok.AllArgsConstructor;
@@ -71,5 +72,13 @@ public class FileService {
 
     public void saveFile(FileAud file) {
         repository.save(file);
+    }
+
+    public static FileTo fileToFileTo(FileAud file) {
+        FileTo fileTo = new FileTo();
+        fileTo.setId(file.getId());
+        fileTo.setName(file.getName());
+        fileTo.setOriginalName(file.getOriginalName());
+        return fileTo;
     }
 }

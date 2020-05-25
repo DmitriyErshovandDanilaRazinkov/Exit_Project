@@ -1,45 +1,47 @@
 package com.controller;
 
-import com.model.User;
+import com.model.DTO.UserFormTO;
 import com.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 
 @AllArgsConstructor
 @Controller
-public class RegistrationController {
+@RequestMapping("/registration")
+public class RegistrationController extends BaseController {
 
     private UserService userService;
 
-    @GetMapping("/registration")
+    @GetMapping
     public String registration(Model model) {
-        model.addAttribute("userForm", new User());
-
         return "login/registration";
     }
 
-    @PostMapping("/registration")
-    public String addUser(@ModelAttribute("userForm") @Valid User userForm, BindingResult bindingResult, Model model) {
+    @PostMapping
+    public String addUser(@Valid UserFormTO userForm, BindingResult bindingResult, RedirectAttributes redirectAttributes,
+                          Model model) {
 
         if (bindingResult.hasErrors()) {
-            return "exception";
+            redirectAttributes.addFlashAttribute("userForm", userForm);
+            addValidationMessage(redirectAttributes, bindingResult);
+            return "redirect:/registration";
         }
-        if (!userForm.getPassword().equals(userForm.getPasswordConfirm())) {
-            model.addAttribute("passwordError", "Пароли не совпадают");
-            return "login/registration";
-        }
-        if (!userService.addUser(userForm)) {
-            model.addAttribute("usernameError", "Пользователь с таким именем уже существует");
-            return "login/registration";
+        if (!userForm.getPassword().equals(userForm.getConfirmPassword())) {
+            redirectAttributes.addFlashAttribute("userForm", userForm);
+            redirectAttributes.addFlashAttribute("passwordsNotEquals", "Пароли не совпадают");
+            return "redirect:/registration";
         }
 
-        return "mainPage";
+        userService.addUser(userForm);
+
+        return "redirect:/";
     }
 }

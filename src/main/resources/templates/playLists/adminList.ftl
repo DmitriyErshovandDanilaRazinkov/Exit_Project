@@ -15,20 +15,20 @@
         </thead>
         <#list pageTo.roleInPlayListList as userWithRole>
             <tr>
-                <td>${userWithRole.idComp.user.username}</td>
+                <td>${userWithRole.user.username}</td>
                 <td>${userWithRole.playListRole.getName()}</td>
                 <td>
                     <#if userWithRole.playListRole.id==3>
                         <form action="/playLists/${pageTo.playListId}/deleteAdmin" method="post"
                               enctype="multipart/form-data">
-                            <input type="hidden" name="userId" value="${userWithRole.idComp.user.id}">
+                            <input type="hidden" name="userId" value="${userWithRole.user.id}">
                             <button type="submit">Удалить админа</button>
                         </form>
                     </#if>
                     <#if userWithRole.playListRole.id < 3>
                         <form action="/playLists/${pageTo.playListId}/addAdmin" method="post"
                               enctype="multipart/form-data">
-                            <input type="hidden" name="userId" value="${userWithRole.idComp.user.id}">
+                            <input type="hidden" name="userId" value="${userWithRole.user.id}">
                             <button type="submit">Добавить админа</button>
                         </form>
                     </#if>

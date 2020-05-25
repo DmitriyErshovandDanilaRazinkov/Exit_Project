@@ -12,10 +12,6 @@ import static java.util.Collections.singletonList;
 @EnableSwagger2
 public class Begin {
 
-    public Begin(FreeMarkerConfigurer freeMarkerConfigurer) {
-        freeMarkerConfigurer.getTaglibFactory().setClasspathTlds(singletonList("/META-INF/security.tld"));
-    }
-
     public static void main(String[] args) {
         SpringApplication.run(Begin.class, args);
     }

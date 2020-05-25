@@ -1,15 +1,14 @@
 package com.controller;
 
+import com.model.DTO.PlayListTo;
 import com.model.DTO.pages.playList.PlayListListUserTO;
+import com.model.DTO.pages.playList.PlayListPageTo;
 import com.model.DTO.pages.playList.PlayListUsersTO;
-import com.model.PlayList;
 import com.model.Role_PlayList;
-import com.model.User;
 import com.service.PlayListService;
 import com.service.RoleInPlayListsService;
 import com.service.UserService;
 import lombok.AllArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,8 +16,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.annotation.security.RolesAllowed;
+
 @AllArgsConstructor
 @Controller
+@RolesAllowed({"USER", "ADMIN"})
 public class PlayListContentController {
 
     private UserService userService;
@@ -28,51 +30,51 @@ public class PlayListContentController {
     private RoleInPlayListsService roleInPlayListsService;
 
     @GetMapping("/playLists/{id}")
-    public String getUserPlayList(@PathVariable Long id, Authentication authentication, Model model) {
+    public String getUserPlayList(@PathVariable Long id, Model model) {
 
-        PlayList nowPlayList = playListService.findPlayListById(id);
-        User nowUser = userService.findUserById(((User) authentication.getPrincipal()).getId());
+        PlayListTo nowPlayList = playListService.findPlayListToById(id);
 
         if (nowPlayList.isPrivate() &&
-                !userService.checkUserRights(nowUser.getId(), nowPlayList.getId(), Role_PlayList.ROLE_NONE)) {
+                !userService.checkUserRights(nowPlayList.getId(), Role_PlayList.ROLE_NONE)) {
             model.addAttribute("exceptionText", "У Вас не доступа к этому плейлисту");
             return "exception";
         }
 
-        model.addAttribute("playList", nowPlayList);
+        PlayListPageTo pageTo = new PlayListPageTo();
+        pageTo.setPlayList(nowPlayList);
+        pageTo.setUserRole(roleInPlayListsService.getToUserRoleInPlayList(UserService.getCurrentUser().getId(), nowPlayList.getId()));
+        pageTo.setAudioList(playListService.getPlayListAudios(id));
 
-        model.addAttribute("userRole", roleInPlayListsService.getUserRoleInPlayList(nowUser.getId(), nowPlayList.getId()));
-
+        model.addAttribute("pageTo", pageTo);
 
         return "playLists/playListPage";
     }
 
 
-    @PostMapping("/playLists/{id}")
+    @PostMapping("/playLists/{id}/deleteAudio")
     public String deleteAudio(@PathVariable Long id,
                               @RequestParam(defaultValue = "") Long audioId,
                               @RequestParam(defaultValue = "") String action,
-                              Authentication authentication, Model model) {
+                              Model model) {
         if (action.equals("delete")) {
             playListService.deleteAudioFromPlayList(id, audioId);
         }
 
-        if (!userService.checkUserRights(((User) authentication.getPrincipal()).getId(), id, Role_PlayList.ROLE_OWNER)) {
+        if (!userService.checkUserRights(id, Role_PlayList.ROLE_OWNER)) {
             model.addAttribute("exceptionText", "У Вас не доступа к этой операции");
             return "exception";
         }
 
-        return getUserPlayList(id, authentication, model);
+        return "redirect:/playLists/{id}";
     }
 
 
     @GetMapping("/playLists/{id}/listUsers")
-    public String getUsers(@PathVariable Long id, Authentication authentication, Model model) {
+    public String getUsers(@PathVariable Long id, Model model) {
 
-        PlayList nowPlayList = playListService.findPlayListById(id);
-        User nowUser = userService.findUserById(((User) authentication.getPrincipal()).getId());
+        PlayListTo nowPlayList = playListService.findPlayListToById(id);
 
-        if (!userService.checkUserRights(nowUser.getId(), id, Role_PlayList.ROLE_USER)) {
+        if (!userService.checkUserRights(id, Role_PlayList.ROLE_USER)) {
             model.addAttribute("exceptionText", "У Вас не доступа к этому плейлисту");
             return "exception";
         }
@@ -80,9 +82,9 @@ public class PlayListContentController {
         PlayListListUserTO pageTo = new PlayListListUserTO();
 
         pageTo.setPlayListId(id);
-        pageTo.setRoleInPlayListList(nowPlayList.getRoleInPlayLists());
+        pageTo.setRoleInPlayListList(playListService.getRoleInPlayLists(id));
         pageTo.setJoinCode("http://localhost:8080/playLists/join/" + nowPlayList.getJoinCode());
-        pageTo.setNowUserRole(roleInPlayListsService.getUserRoleInPlayList(nowUser.getId(), nowPlayList.getId())
+        pageTo.setNowUserRole(roleInPlayListsService.getToUserRoleInPlayList(UserService.getCurrentUser().getId(), nowPlayList.getId())
                 .getPlayListRole().getId());
 
         model.addAttribute("pageTo", pageTo);
@@ -92,17 +94,17 @@ public class PlayListContentController {
 
 
     @PostMapping("/playLists/{id}/deleteUser")
-    public String deleteUserFromList(@PathVariable Long id, @RequestParam("userId") Long userId, Authentication authentication, Model model) {
+    public String deleteUserFromList(@PathVariable Long id, @RequestParam("userId") Long userId, Model model) {
 
-        User nowUser = userService.findUserById(((User) authentication.getPrincipal()).getId());
 
-        if (!userService.checkUserRights(nowUser.getId(), id, Role_PlayList.ROLE_ADMIN)) {
+        if (!userService.checkUserRights(id, Role_PlayList.ROLE_ADMIN)) {
             model.addAttribute("exceptionText", "У Вас не доступа к этой операции");
             return "exception";
         }
 
-        if (roleInPlayListsService.getUserRoleInPlayList(userId, id).getPlayListRole().compare(Role_PlayList.ROLE_ADMIN) &&
-                roleInPlayListsService.getUserRoleInPlayList(nowUser.getId(), id).getPlayListRole().compare(Role_PlayList.ROLE_OWNER)) {
+        if (roleInPlayListsService.getToUserRoleInPlayList(userId, id).getPlayListRole().compare(Role_PlayList.ROLE_ADMIN) &&
+                roleInPlayListsService.getToUserRoleInPlayList(UserService.getCurrentUser().getId(), id)
+                        .getPlayListRole().compare(Role_PlayList.ROLE_OWNER)) {
             model.addAttribute("exceptionText", "Админ не может удалить админа");
             return "exception";
         }
@@ -113,9 +115,9 @@ public class PlayListContentController {
     }
 
     @GetMapping("/playLists/{id}/admins")
-    public String getAdminPage(@PathVariable Long id, Authentication authentication, Model model) {
+    public String getAdminPage(@PathVariable Long id, Model model) {
 
-        if (!userService.checkUserRights(((User) authentication.getPrincipal()).getId(), id, Role_PlayList.ROLE_OWNER)) {
+        if (!userService.checkUserRights(id, Role_PlayList.ROLE_OWNER)) {
             model.addAttribute("exceptionText", "У Вас не доступа к этой операции");
             return "exception";
         }
@@ -131,9 +133,9 @@ public class PlayListContentController {
     }
 
     @PostMapping("/playLists/{id}/addAdmin")
-    public String addAdmin(@PathVariable Long id, @RequestParam Long userId, Authentication authentication, Model model) {
+    public String addAdmin(@PathVariable Long id, @RequestParam Long userId, Model model) {
 
-        if (!userService.checkUserRights(((User) authentication.getPrincipal()).getId(), id, Role_PlayList.ROLE_OWNER)) {
+        if (!userService.checkUserRights(id, Role_PlayList.ROLE_OWNER)) {
             model.addAttribute("exceptionText", "У Вас не доступа к этой операции");
             return "exception";
         }
@@ -144,9 +146,9 @@ public class PlayListContentController {
     }
 
     @PostMapping("/playLists/{id}/deleteAdmin")
-    public String deleteAdmin(@PathVariable Long id, @RequestParam Long userId, Authentication authentication, Model model) {
+    public String deleteAdmin(@PathVariable Long id, @RequestParam Long userId, Model model) {
 
-        if (!userService.checkUserRights(((User) authentication.getPrincipal()).getId(), id, Role_PlayList.ROLE_OWNER)) {
+        if (!userService.checkUserRights(id, Role_PlayList.ROLE_OWNER)) {
             model.addAttribute("exceptionText", "У Вас не доступа к этой операции");
             return "exception";
         }
@@ -157,9 +159,9 @@ public class PlayListContentController {
     }
 
     @GetMapping("/playLists/{id}/moderators")
-    public String getModeratorPage(@PathVariable Long id, Authentication authentication, Model model) {
+    public String getModeratorPage(@PathVariable Long id, Model model) {
 
-        if (!userService.checkUserRights(((User) authentication.getPrincipal()).getId(), id, Role_PlayList.ROLE_ADMIN)) {
+        if (!userService.checkUserRights(id, Role_PlayList.ROLE_ADMIN)) {
             model.addAttribute("exceptionText", "У Вас не доступа к этой операции");
             return "exception";
         }
@@ -174,9 +176,9 @@ public class PlayListContentController {
     }
 
     @PostMapping("/playLists/{id}/addModerator")
-    public String addModerator(@PathVariable Long id, @RequestParam Long userId, Authentication authentication, Model model) {
+    public String addModerator(@PathVariable Long id, @RequestParam Long userId, Model model) {
 
-        if (!userService.checkUserRights(((User) authentication.getPrincipal()).getId(), id, Role_PlayList.ROLE_ADMIN)) {
+        if (!userService.checkUserRights(id, Role_PlayList.ROLE_ADMIN)) {
             model.addAttribute("exceptionText", "У Вас не доступа к этой операции");
             return "exception";
         }
@@ -187,9 +189,9 @@ public class PlayListContentController {
     }
 
     @PostMapping("/playLists/{id}/deleteModerator")
-    public String deleteModerator(@PathVariable Long id, @RequestParam Long userId, Authentication authentication, Model model) {
+    public String deleteModerator(@PathVariable Long id, @RequestParam Long userId, Model model) {
 
-        if (!userService.checkUserRights(((User) authentication.getPrincipal()).getId(), id, Role_PlayList.ROLE_ADMIN)) {
+        if (!userService.checkUserRights(id, Role_PlayList.ROLE_ADMIN)) {
             model.addAttribute("exceptionText", "У Вас не доступа к этой операции");
             return "exception";
         }
@@ -200,9 +202,9 @@ public class PlayListContentController {
     }
 
     @GetMapping("/playLists/{id}/changeOwner")
-    public String getChangeOwnerPage(@PathVariable Long id, Authentication authentication, Model model) {
+    public String getChangeOwnerPage(@PathVariable Long id, Model model) {
 
-        if (!userService.checkUserRights(((User) authentication.getPrincipal()).getId(), id, Role_PlayList.ROLE_OWNER)) {
+        if (!userService.checkUserRights(id, Role_PlayList.ROLE_OWNER)) {
             model.addAttribute("exceptionText", "У Вас не доступа к этой операции");
             return "exception";
         }
@@ -218,9 +220,8 @@ public class PlayListContentController {
     }
 
     @GetMapping("/playLists/join/{joinCode}")
-    public String joinInPlayList(@PathVariable("joinCode") String joinCode, Authentication authentication, Model model) {
+    public String joinInPlayList(@PathVariable("joinCode") String joinCode, Model model) {
 
-        return getUserPlayList(playListService.joinUser(joinCode, ((User) authentication.getPrincipal()).getId()),
-                authentication, model);
+        return getUserPlayList(playListService.joinUser(joinCode, UserService.getCurrentUser().getId()), model);
     }
 }

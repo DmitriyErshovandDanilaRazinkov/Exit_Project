@@ -1,37 +1,20 @@
-<#import "/spring.ftl" as spring />
+<#import "../parts/common.ftl" as common>
 
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>Регистрация</title>
-</head>
-
-<body>
-<div>
-    <form method="post" enctype="multipart/form-data">
+<@common.page>
+    <div>
         <h2>Регистрация</h2>
-        <div>
-            <@spring.formInput path="userForm.username" fieldType="text" attributes='placeholder="Username" autofocus="true"'></@spring.formInput>
-            <@spring.showErrors ' ', 'errors'>
-                ${usernameError}
-            </@spring.showErrors>
-        </div>
-        <div>
-            <@spring.formInput path="userForm.password" fieldType="password" attributes='placeholder="Password"'></@spring.formInput>
-        </div>
-        <div>
-            <@spring.formInput path="userForm.passwordConfirm" fieldType="password"
-            attributes='placeholder="Confirm your password"'></@spring.formInput>
-            <@spring.showErrors ' ', 'errors'>
-                ${passwordError}
-            </@spring.showErrors>
-        </div>
-        <button type="submit">Зарегистрироваться</button>
-    </form>
-    <@spring.showErrors ' ', 'errors'/>
+        <form method="post" action="/registration">
+            <div><input type="text" name="userName" placeholder="НикНейм" value="${(userForm.userName)!""}">
+                <span>${(validation.userName)!""}</span></div>
+            <div><input type="password" name="password" placeholder="Пароль" value="${(userForm.password)!""}">
+                <span>${(validation.password)!""}</span></div>
+            <div><input type="password" name="confirmPassword" placeholder="Подтвердите Пароль"
+                        value="${(userForm.confirmPassword)!""}">
+                <span>${(validation.confirmPassword)!""}</span>
+                <span>${(passwordsNotEquals)!""}</span></div>
+            <button type="submit" class="btn-success">Регистрация</button>
+        </form>
+        <a href="/">Главная</a>
+    </div>
 
-    <a href="/">Главная</a>
-</div>
-</body>
-</html>
+</@common.page>

@@ -7,7 +7,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @ApiModel
@@ -32,7 +34,7 @@ public class PlayList {
     @ApiModelProperty
     @ManyToMany(fetch = FetchType.EAGER)
     @JsonIgnoreProperties("playLists")
-    private Set<Audio> listAudio = new HashSet<>();
+    private List<Audio> listAudio = new ArrayList<>();
 
     @ApiModelProperty
     @OneToMany(mappedBy = "idComp.playList", fetch = FetchType.EAGER)
