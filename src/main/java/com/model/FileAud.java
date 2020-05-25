@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @ApiModel
 @Data
@@ -22,6 +23,12 @@ public class FileAud {
 
     @ApiModelProperty
     private String originalName;
+
+    @ApiModelProperty
+    @Transient
+    @ManyToMany(mappedBy = "listeners")
+    @JsonIgnoreProperties("listeners")
+    private Set<User> listeners;
 
     public FileAud(){}
 

@@ -53,6 +53,9 @@ public class User implements UserDetails {
     @JsonIgnoreProperties("user")
     private Set<RoleInPlayList> roleInPlayLists = new HashSet<>();
 
+
+
+
     public User() {
     }
 

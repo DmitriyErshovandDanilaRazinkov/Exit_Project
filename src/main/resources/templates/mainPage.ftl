@@ -7,7 +7,6 @@
             <div class = "row">
                 <div class = "col-sm">
                     <h2 >Новые поступления:</h2>
-
                 </div>
                 <div class = "col-sm">
                     <div class = "mx-5">
