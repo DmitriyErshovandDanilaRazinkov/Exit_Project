@@ -1,5 +1,6 @@
 package com.controller;
 
+import com.model.DTO.FileTo;
 import com.model.FileAud;
 import com.service.FileService;
 import io.swagger.annotations.Api;
@@ -22,14 +23,14 @@ public class FileController {
 
     @ApiOperation("Получение списка файлов")
     @GetMapping("/files")
-    public ResponseEntity<List<FileAud>> getAllFiles() {
+    public ResponseEntity<List<FileTo>> getAllFiles() {
         return ResponseEntity.ok(service.getAll());
     }
 
     @ApiOperation("Получение файла по id")
     @GetMapping("/files/{id}")
-    public ResponseEntity<FileAud> getFile(@PathVariable long id) {
-        return ResponseEntity.ok(service.foundFileById(id));
+    public ResponseEntity<?> getFile(@PathVariable long id) {
+        return ResponseEntity.ok(service.findFileToById(id));
     }
 
     @ApiOperation("Удаление файла")

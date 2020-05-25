@@ -80,7 +80,7 @@ public class AdminController {
     @ApiOperation("Показывает файл по id")
     @GetMapping("/getFile/{fileId}")
     public String getFile(@PathVariable("fileId") Long fileId, Model model) {
-        model.addAttribute("files", fileService.foundFileById(fileId));
+        model.addAttribute("files", fileService.findFileToById(fileId));
         return "/files/listFiles1";
     }
 
@@ -105,7 +105,7 @@ public class AdminController {
     @ApiOperation("Аудио по id")
     @GetMapping("/audio/{audioId}")
     public String getAudio(@PathVariable Long audioId, Model model) {
-        model.addAttribute("audio", audioService.foundAudioById(audioId));
+        model.addAttribute("audio", audioService.findAudioToById(audioId));
         model.addAttribute("tagList", tagService.getAll());
         return "/audios/audio";
     }
@@ -141,7 +141,7 @@ public class AdminController {
     @ApiOperation("Показывает тэг по id")
     @GetMapping("/getTag/{tagId}")
     public String getTag(@PathVariable("tagId") Long tagId, Model model) {
-        model.addAttribute("tags", tagService.foundTagById(tagId));
+        model.addAttribute("tags", tagService.findTagToById(tagId));
         return "/tags/listTags";
     }
 }

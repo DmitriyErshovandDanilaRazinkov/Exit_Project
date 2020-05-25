@@ -3,9 +3,6 @@ package com.service;
 import com.model.DTO.FileTo;
 import com.model.FileAud;
 import com.repository.FileRepository;
-import lombok.AllArgsConstructor;
-import net.bytebuddy.asm.Advice;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.acls.model.NotFoundException;
 import org.springframework.stereotype.Service;
@@ -14,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.UUID.randomUUID;
 
@@ -29,11 +27,17 @@ public class FileService {
         this.repository = repository;
     }
 
-    public List<FileAud> getAll() {
-        return repository.findAll();
+    public List<FileTo> getAll() {
+        return repository.findAll().stream()
+                .map(FileService::fileToFileTo)
+                .collect(Collectors.toList());
     }
 
-    public FileAud foundFileById(long id) {
+    public FileTo findFileToById(Long id) {
+        return FileService.fileToFileTo(findFileById(id));
+    }
+
+    FileAud findFileById(Long id) {
         return repository.findById(id).orElseThrow(() -> new NotFoundException("Файл не найден"));
     }
 
@@ -46,7 +50,11 @@ public class FileService {
         repository.deleteById(id);
     }
 
-    public FileAud uploadFile(MultipartFile file) throws IOException {
+    public void createNewFile(MultipartFile file) throws IOException {
+        uploadFile(file);
+    }
+
+    FileAud uploadFile(MultipartFile file) throws IOException {
         if (file != null) {
 
             File uploadDir = new File(uploadPath);
@@ -70,7 +78,7 @@ public class FileService {
         }
     }
 
-    public void saveFile(FileAud file) {
+    void saveFile(FileAud file) {
         repository.save(file);
     }
 

@@ -42,7 +42,7 @@ public class FileContentController {
 
     @RequestMapping("/download/{fileId}")
     public void downloadAudioResource(HttpServletRequest request, HttpServletResponse response, @PathVariable() Long fileId) throws IOException {
-        String fileName = fileService.foundFileById(fileId).getName();
+        String fileName = fileService.findFileToById(fileId).getName();
         File file = new File(uploadPath + '/' + fileName);
 
         response.setHeader("Content-Type", servletContext.getMimeType(removeExtension(fileName)));
@@ -71,7 +71,7 @@ public class FileContentController {
 
     @PostMapping("/upload/file")
     public String uploadFile(@RequestParam("file") MultipartFile file, Model model) throws IOException {
-        fileService.uploadFile(file);
+        fileService.createNewFile(file);
         model.addAttribute("result", "File upload");
         return "uploadForm/uploadResult";
     }

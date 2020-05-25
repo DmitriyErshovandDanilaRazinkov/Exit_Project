@@ -1,6 +1,7 @@
 package com.controller;
 
 import com.model.Audio;
+import com.model.DTO.AudioTo;
 import com.model.DTO.pages.user.UserPageTo;
 import com.model.Role_PlayList;
 import com.model.User;
@@ -87,7 +88,7 @@ public class UserContentController {
     @GetMapping("/user/audioPage/{audioId}")
     public String getAudioPage(@PathVariable("audioId") Long audioId, Authentication authentication, Model model) {
 
-        Audio nowAudio = audioService.foundAudioById(audioId);
+        AudioTo nowAudio = audioService.findAudioToById(audioId);
         if (nowAudio.isPremium() && !(userService.checkUserPremium())) {
             model.addAttribute("exceptionText", "У Вас нет премиума");
             return "/exception";

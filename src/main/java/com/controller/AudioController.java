@@ -1,6 +1,6 @@
 package com.controller;
 
-import com.model.Audio;
+import com.model.DTO.AudioTo;
 import com.service.AudioService;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -21,14 +21,14 @@ public class AudioController {
 
     @ApiOperation("Получение списка аудио")
     @GetMapping("/audios")
-    public ResponseEntity<List<Audio>> getAllAudios() {
+    public ResponseEntity<List<AudioTo>> getAllAudios() {
         return ResponseEntity.ok(service.getAll());
     }
 
     @ApiOperation("Получение аудио по id")
     @GetMapping("/audios/{id}")
     public ResponseEntity<?> getAudio(@PathVariable long id) {
-        return ResponseEntity.ok(service.foundAudioById(id));
+        return ResponseEntity.ok(service.findAudioToById(id));
     }
 
     @ApiOperation("Удаление аудио")

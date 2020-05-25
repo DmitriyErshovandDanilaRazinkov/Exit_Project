@@ -52,7 +52,7 @@ public class PlayListService {
     public void addAudio(long id, long audioId) {
         if (repository.findById(id).isPresent()) {
 
-            Audio nowAudio = audioService.foundAudioById(audioId);
+            Audio nowAudio = audioService.findAudioById(audioId);
             PlayList nowPlayList = repository.findById(id).get();
 
             nowPlayList.getListAudio().add(nowAudio);
@@ -73,11 +73,8 @@ public class PlayListService {
     }
 
     public void deleteAudioFromPlayList(long id, long audioId) {
-        if (repository.findById(id).isPresent()) {
-            repository.findById(id).get().getListAudio().remove(audioService.foundAudioById(audioId));
-        } else {
-            throw new NotFoundDataBaseException("ПлейЛист не найден");
-        }
+        repository.findById(id).orElseThrow(() -> new NotFoundDataBaseException("ПлейЛист не найден"))
+                .getListAudio().remove(audioService.findAudioById(audioId));
     }
 
     public List<PlayListTo> getAll() {

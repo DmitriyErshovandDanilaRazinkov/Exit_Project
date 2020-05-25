@@ -1,5 +1,6 @@
 package com.controller;
 
+import com.model.DTO.TagTo;
 import com.model.Tag;
 import com.service.TagService;
 import io.swagger.annotations.Api;
@@ -22,14 +23,14 @@ public class TagController {
 
     @ApiOperation("Получение списка тэгов")
     @GetMapping("/tags")
-    public ResponseEntity<List<Tag>> getAllTags() {
+    public ResponseEntity<List<TagTo>> getAllTags() {
         return ResponseEntity.ok(service.getAll());
     }
 
     @ApiOperation("Получение тэга по id")
     @GetMapping("/tags/{id}")
     public ResponseEntity<?> getFile(@PathVariable long id) {
-        return ResponseEntity.ok(service.foundTagById(id));
+        return ResponseEntity.ok(service.findTagToById(id));
     }
 
     @ApiOperation("Удаление файла")

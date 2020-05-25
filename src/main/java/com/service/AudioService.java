@@ -3,6 +3,7 @@ package com.service;
 import com.exceptions.NotFoundDataBaseException;
 import com.model.Audio;
 import com.model.DTO.AudioTo;
+import com.model.DTO.FileTo;
 import com.model.FileAud;
 import com.repository.AudioRepository;
 import lombok.AllArgsConstructor;
@@ -60,7 +61,7 @@ public class AudioService {
 
     public void addTagToAudio(long audioId, long tagId) {
         Audio audio = findAudioById(audioId);
-        audio.setOneTag(tagService.foundTagById(tagId));
+        audio.setOneTag(tagService.findTagById(tagId));
         repository.save(audio);
     }
 

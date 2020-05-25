@@ -1,12 +1,14 @@
 package com.service;
 
 import com.exceptions.NotFoundDataBaseException;
+import com.model.DTO.TagTo;
 import com.model.Tag;
 import com.repository.TagRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -19,15 +21,28 @@ public class TagService {
         repository.save(new Tag(name));
     }
 
-    public List<Tag> getAll() {
-        return repository.findAll();
+    public List<TagTo> getAll() {
+        return repository.findAll().stream()
+                .map(TagService::tagToTagTo)
+                .collect(Collectors.toList());
     }
 
-    public Tag foundTagById(long id) {
+    public TagTo findTagToById(Long id) {
+        return TagService.tagToTagTo(findTagById(id));
+    }
+
+    Tag findTagById(Long id) {
         return repository.findById(id).orElseThrow(() -> new NotFoundDataBaseException("Тэг не найден"));
     }
 
     public void deleteTag(Long id) {
         repository.deleteById(id);
+    }
+
+    public static TagTo tagToTagTo(Tag tag) {
+        TagTo tagTo = new TagTo();
+        tagTo.setId(tag.getId());
+        tagTo.setName(tag.getName());
+        return tagTo;
     }
 }
