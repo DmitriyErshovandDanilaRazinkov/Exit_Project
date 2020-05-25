@@ -6,6 +6,7 @@ import com.service.TagService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,13 +25,13 @@ public class TagController {
     @ApiOperation("Получение списка тэгов")
     @GetMapping("/tags")
     public ResponseEntity<List<TagTo>> getAllTags() {
-        return ResponseEntity.ok(service.getAll());
+        return ResponseEntity.status(HttpStatus.OK).body(service.getAll());
     }
 
     @ApiOperation("Получение тэга по id")
     @GetMapping("/tags/{id}")
     public ResponseEntity<?> getFile(@PathVariable long id) {
-        return ResponseEntity.ok(service.findTagToById(id));
+        return ResponseEntity.status(HttpStatus.OK).body(service.findTagToById(id));
     }
 
     @ApiOperation("Удаление файла")
