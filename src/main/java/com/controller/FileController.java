@@ -31,7 +31,7 @@ public class FileController {
     @ApiOperation("Получение файла по id")
     @GetMapping("/files/{id}")
     public ResponseEntity<?> getFile(@PathVariable long id) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.foundFileById(id));
+        return ResponseEntity.status(HttpStatus.OK).body(service.findFileToById(id));
     }
 
     @ApiOperation("Удаление файла")
