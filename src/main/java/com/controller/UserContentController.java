@@ -3,6 +3,7 @@ package com.controller;
 import com.model.Audio;
 import com.model.DTO.AudioTo;
 import com.model.DTO.pages.user.UserPageTo;
+import com.model.DTO.pages.user.UserPageToAddPlaylist;
 import com.model.Role_PlayList;
 import com.model.User;
 import com.service.AudioService;
@@ -31,7 +32,7 @@ public class UserContentController {
     private AudioService audioService;
 
     @GetMapping("/user")
-    public String getUserPage(Authentication authentication, Model model) {
+    public String getUserPage(Model model) {
         UserPageTo pageTo = new UserPageTo();
 
         pageTo.setUser(UserService.getCurrentUser());
@@ -60,16 +61,20 @@ public class UserContentController {
     @GetMapping("/audio/addInPlayList/{id}")
     public String addInPlayList(@PathVariable("id") Long id, Model model) {
 
-        model.addAttribute("playLists", playListService.getPlayListsByUser(UserService.getCurrentUser().getId()));
+        UserPageToAddPlaylist userPageToAddPlaylist = new UserPageToAddPlaylist();
+        userPageToAddPlaylist.setPlayLists(playListService.getPlayListsByUser(UserService.getCurrentUser().getId()));
+        userPageToAddPlaylist.setResult("");
 
-        model.addAttribute("result", "");
+        //model.addAttribute("playLists", playListService.getPlayListsByUser(UserService.getCurrentUser().getId()));
+        //model.addAttribute("result", "");
+
+        model.addAttribute("userPageTo", userPageToAddPlaylist);
 
         return "/playLists/addAudioInPlayList";
     }
 
     @PostMapping("/audio/addInPlayList/{id}")
-    public String addInPlayList(@PathVariable("id") Long id, @RequestParam("playListId") Long playListId,
-                                Authentication authentication, Model model) {
+    public String addInPlayList(@PathVariable("id") Long id, @RequestParam("playListId") Long playListId, Model model) {
 
         if (!userService.checkUserRights(playListId, Role_PlayList.ROLE_MODERATOR)) {
             model.addAttribute("exceptionText", "Вы не имеете прав");
@@ -78,15 +83,21 @@ public class UserContentController {
 
         playListService.addAudio(playListId, id);
 
-        model.addAttribute("playLists", playListService.getPlayListsByUser(UserService.getCurrentUser().getId()));
+        UserPageToAddPlaylist userPageToAddPlaylist = new UserPageToAddPlaylist();
 
-        model.addAttribute("result", "Аудио добавлено");
+        userPageToAddPlaylist.setPlayLists(playListService.getPlayListsByUser(UserService.getCurrentUser().getId()));
+        userPageToAddPlaylist.setResult("Аудио добавлено");
+
+        //model.addAttribute("playLists", playListService.getPlayListsByUser(UserService.getCurrentUser().getId()));
+        //model.addAttribute("result", "Аудио добавлено");
+
+        model.addAttribute("userPageTo",userPageToAddPlaylist);
 
         return "/playLists/addAudioInPlayList";
     }
 
     @GetMapping("/user/audioPage/{audioId}")
-    public String getAudioPage(@PathVariable("audioId") Long audioId, Authentication authentication, Model model) {
+    public String getAudioPage(@PathVariable("audioId") Long audioId, Model model) {
 
         AudioTo nowAudio = audioService.findAudioToById(audioId);
         if (nowAudio.isPremium() && !(userService.checkUserPremium())) {
@@ -107,9 +118,10 @@ public class UserContentController {
     }
 
     @PostMapping("/store/premium")
-    public String buyPremium(Authentication authentication, Model model) {
+    public String buyPremium(Model model) {
 
-        if (userService.buyPremium(((User) authentication.getPrincipal()).getId(), 3600L * 24L * 10L, 30)) {
+
+        if (userService.buyPremium(UserService.getCurrentUser().getId(), 3600L * 24L * 10L, 30)) {
             model.addAttribute("message", "Премиум куплен");
             model.addAttribute("exception", "");
         } else {
@@ -121,11 +133,11 @@ public class UserContentController {
     }
 
     @PostMapping("/store/addCash")
-    public String addCash(Authentication authentication, Model model) {
+    public String addCash(Model model) {
 
         model.addAttribute("message", "Счет пополнен");
         model.addAttribute("exception", "");
-        userService.addCash(((User) authentication.getPrincipal()).getId(), 50D);
+        userService.addCash(UserService.getCurrentUser().getId(), 50D);
 
         return "store/premiumStore";
     }

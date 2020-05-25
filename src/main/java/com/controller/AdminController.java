@@ -1,5 +1,6 @@
 package com.controller;
 
+import com.model.DTO.pages.user.UserToPageAdmin;
 import com.service.AudioService;
 import com.service.FileService;
 import com.service.TagService;
@@ -12,6 +13,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @AllArgsConstructor
 @Api
@@ -38,7 +42,10 @@ public class AdminController {
     @ApiOperation("Показывает лист пользователей")
     @GetMapping("/users")
     public String userList(Model model) {
+        UserToPageAdmin userToPageAdmin = new UserToPageAdmin();
+
         model.addAttribute("allUsers", userService.allUsers());
+
         return "/users/listUsers";
     }
 
@@ -55,7 +62,16 @@ public class AdminController {
     @ApiOperation("Показывает пользователя по id")
     @GetMapping("/getUser/{userId}")
     public String getUser(@PathVariable("userId") Long userId, Model model) {
-        model.addAttribute("allUsers", userService.findUserToById(userId));
+        UserToPageAdmin userToPageAdmin = new UserToPageAdmin();
+        userToPageAdmin.setId(userService.findUserToById(userId).getId());
+        userToPageAdmin.setUsername(userService.findUserToById(userId).getUsername());
+        userToPageAdmin.setCash(userService.findUserToById(userId).getCash());
+        userToPageAdmin.setPremium(userService.findUserToById(userId).isPremium());
+        userToPageAdmin.setRole(userService.findUserToById(userId).getRole());
+        userToPageAdmin.setEndPremium((userService.findUserToById(userId).getEndPremium()));
+
+        model.addAttribute("pageTo",userToPageAdmin);
+        //model.addAttribute("allUsers", userService.findUserToById(userId));
         return "/users/listUsers";
     }
 

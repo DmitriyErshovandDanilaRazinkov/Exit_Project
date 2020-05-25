@@ -3,7 +3,7 @@
 <@common.page>
 
     <table>
-        <#list playLists as playList>
+        <#list userPageTo.playLists as playList>
             <tr>
                 <td>${playList.name}</td>
                 <td>
@@ -17,7 +17,7 @@
     </table>
 
     <div>
-        ${result}
+        ${userPageTo.result}
     </div>
 
 </@common.page>
