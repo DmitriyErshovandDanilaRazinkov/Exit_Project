@@ -23,7 +23,7 @@ public class RoleInPlayListId implements Serializable {
 
     @ApiModelProperty
     @ManyToOne(fetch = FetchType.EAGER)
-    @JsonIgnoreProperties("roleUserInPlayLists")
+    @JsonIgnoreProperties("roleInPlayLists")
     private PlayList playList;
 
     public RoleInPlayListId() {
@@ -34,7 +34,7 @@ public class RoleInPlayListId implements Serializable {
         this.playList = playList;
     }
 
-    public int hashCode () {
-        return Long.hashCode(user.hashCode() +  playList.hashCode());
+    public int hashCode() {
+        return Integer.hashCode(user.hashCode() + playList.hashCode());
     }
 }

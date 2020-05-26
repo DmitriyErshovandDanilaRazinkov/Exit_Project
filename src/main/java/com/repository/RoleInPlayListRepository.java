@@ -19,5 +19,5 @@ public interface RoleInPlayListRepository extends JpaRepository<RoleInPlayList, 
     Optional<RoleInPlayList> findByUser_idAndPlayList_id(@Param("user") Long userId, @Param("playList") Long playListId);
 
     @Query("select r from RoleInPlayList r where r.idComp.playList.id = :playList and r.playListRole <= :role")
-    List<RoleInPlayList> getRoleWhereRoleUnder(@Param("playList") Long userId, @Param("role") Role_PlayList role);
+    List<RoleInPlayList> getRoleWhereRoleUnder(@Param("playList") Long playListId, @Param("role") Role_PlayList role);
 }

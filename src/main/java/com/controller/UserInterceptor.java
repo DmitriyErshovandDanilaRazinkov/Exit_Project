@@ -1,6 +1,7 @@
 package com.controller;
 
 import com.model.DTO.UserDetailsTo;
+import com.model.DTO.UserSecurityTo;
 import com.service.UserService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -18,7 +19,7 @@ public class UserInterceptor extends HandlerInterceptorAdapter {
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
         if (modelAndView != null && !isRedirectView(modelAndView) && isUserLogged()) {
-            UserDetailsTo user = UserService.getCurrentUser();
+            UserSecurityTo user = UserService.getCurrentUser();
             modelAndView.addObject("currentUser", user);
         }
     }

@@ -2,12 +2,15 @@ package com.controller;
 
 import com.exceptions.DontHaveRightsException;
 import com.model.DTO.AudioTo;
+import com.model.DTO.TagTo;
+import com.model.DTO.pages.user.AudioPageTo;
 import com.model.DTO.pages.user.UserPageTo;
 import com.model.DTO.pages.user.UserPageToAddPlaylist;
 import com.model.User;
 import com.model.enums.Role_PlayList;
 import com.service.AudioService;
 import com.service.PlayListService;
+import com.service.TagService;
 import com.service.UserService;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
@@ -30,6 +33,8 @@ public class UserContentController {
     private PlayListService playListService;
 
     private AudioService audioService;
+
+    private TagService tagService;
 
     @GetMapping("/user")
     public String getUserPage(Model model) {
@@ -68,7 +73,38 @@ public class UserContentController {
     @GetMapping("/audio")
     public String getListAudio(Model model) {
 
-        model.addAttribute("listAudio", audioService.getAll());
+        AudioPageTo pageTo = new AudioPageTo();
+
+        pageTo.setTags(tagService.getAll());
+        pageTo.setListAudio(audioService.getAll());
+
+        model.addAttribute("pageTo", pageTo);
+
+        return "/audios/userListAudios";
+    }
+
+    @PostMapping("/audioWithId")
+    public String getListAudioWithTag(@RequestParam(name = "tagId") Long tagId, Model model) {
+
+        AudioPageTo pageTo = new AudioPageTo();
+
+        pageTo.setTags(tagService.getAll());
+        pageTo.setListAudio(audioService.getAll(tagId));
+
+        model.addAttribute("pageTo", pageTo);
+
+        return "/audios/userListAudios";
+    }
+
+    @PostMapping("/audioByName")
+    public String getListAudioByAudioName(@RequestParam(name = "audioName") String audioName, Model model) {
+
+        AudioPageTo pageTo = new AudioPageTo();
+
+        pageTo.setTags(tagService.getAll());
+        pageTo.setListAudio(audioService.getAll(audioName));
+
+        model.addAttribute("pageTo", pageTo);
 
         return "/audios/userListAudios";
     }

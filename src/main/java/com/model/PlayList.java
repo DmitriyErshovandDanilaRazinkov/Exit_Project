@@ -33,7 +33,7 @@ public class PlayList {
     private Set<Audio> listAudio = new HashSet<>();
 
     @ApiModelProperty
-    @OneToMany(mappedBy = "idComp.playList", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "idComp.playList", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @JsonIgnoreProperties("playList")
     private Set<RoleInPlayList> roleInPlayLists = new HashSet<>();
 

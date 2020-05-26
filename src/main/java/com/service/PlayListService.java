@@ -176,6 +176,9 @@ public class PlayListService {
     }
 
     public List<AudioTo> getPlayListAudios(Long id) {
+
+        PlayList playList = findPlayListById(id);
+        playList.getListAudio();
         return findPlayListById(id).getListAudio().stream()
                 .map(AudioService::audioToAudioTo)
                 .collect(Collectors.toList());

@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ControllerAdvice
 public class ExceptionHandlerController {
 
-    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(DontHaveRightsException.class)
     public String dontHaveRightsException(Model model, DontHaveRightsException ex) {
 
@@ -21,7 +20,6 @@ public class ExceptionHandlerController {
         return "exception";
     }
 
-    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NotFoundDataBaseException.class)
     public String notFoundExceptionHandler(Model model, NotFoundDataBaseException ex) {
 

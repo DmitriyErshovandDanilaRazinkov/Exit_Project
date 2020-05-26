@@ -5,6 +5,7 @@ import com.exceptions.NotFoundDataBaseException;
 import com.model.*;
 import com.model.DTO.UserDetailsTo;
 import com.model.DTO.UserFormTO;
+import com.model.DTO.UserSecurityTo;
 import com.model.enums.Role_PlayList;
 import com.repository.UserRepository;
 
@@ -30,23 +31,26 @@ public class UserService implements UserDetailsService {
 
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public static UserDetailsTo getCurrentUser() {
-        return (UserDetailsTo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public static UserSecurityTo getCurrentUser() {
+        return (UserSecurityTo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
 
     @Override
-    public UserDetailsTo loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserSecurityTo loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username);
 
         if (user == null) {
             throw new UsernameNotFoundException("User not found");
         }
 
-        UserDetailsTo detailsTo = userToUserDetailsTo(user);
-        saveUser(user);
+        UserSecurityTo userTo = new UserSecurityTo();
+        userTo.setId(user.getId());
+        userTo.setUsername(user.getUsername());
+        userTo.setPassword(user.getPassword());
+        userTo.setRole(user.getRole());
 
-        return detailsTo;
+        return userTo;
     }
 
     public UserDetailsTo findUserToById(Long id) {
@@ -141,7 +145,6 @@ public class UserService implements UserDetailsService {
         userTo.setId(user.getId());
         userTo.setUsername(user.getUsername());
         userTo.setRole(user.getRole());
-        userTo.setPassword(user.getPassword());
         userTo.setCash(user.getCash());
         userTo.setEndPremium(user.getEndPremium());
         userTo.setPremium(user.isPremium());

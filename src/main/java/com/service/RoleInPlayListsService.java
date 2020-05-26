@@ -6,7 +6,6 @@ import com.model.composite_key.RoleInPlayListId;
 import com.model.enums.Role_PlayList;
 import com.repository.RoleInPlayListRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.acls.model.NotFoundException;
 import org.springframework.stereotype.Service;
 
