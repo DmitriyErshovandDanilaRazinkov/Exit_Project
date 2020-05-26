@@ -34,7 +34,7 @@
                                       action="/playLists/${pageTo.playList.id}/deleteAudio">
                                     <input type="hidden" name="audioId" value="${audio.id}"/>
                                     <input type="hidden" name="action" value="delete"/>
-                                    <button type="submit" class="btn btn-outline-danger">Delete</button>
+                                    <button type="submit" class="btn btn-outline-danger mx-3">Delete</button>
                                 </form>
                             </#if>
                         </td>

@@ -6,10 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @ApiModel
 @Data
@@ -33,10 +30,10 @@ public class PlayList {
     @ApiModelProperty
     @ManyToMany(fetch = FetchType.EAGER)
     @JsonIgnoreProperties("playLists")
-    private List<Audio> listAudio = new ArrayList<>();
+    private Set<Audio> listAudio = new HashSet<>();
 
     @ApiModelProperty
-    @OneToMany(mappedBy = "idComp.playList", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "idComp.playList", fetch = FetchType.EAGER)
     @JsonIgnoreProperties("playList")
     private Set<RoleInPlayList> roleInPlayLists = new HashSet<>();
 

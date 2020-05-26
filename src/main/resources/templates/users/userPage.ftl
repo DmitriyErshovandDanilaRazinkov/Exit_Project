@@ -12,10 +12,11 @@
                         <tr>
                             <td>
                                 <form action="/deletePlayList" method="post">
-                                    <input type="hidden" name="playListId" value="${playList.id}">
-                                    <button class="btn btn-outline-danger ml-5" type="submit">Удалить</button>
+                                <td><input type="hidden" name="playListId" value="${playList.id}">
+                                    <a href="/playLists/${playList.id}">${playList.name}</a></td>
+                                <td><button class="btn btn-outline-danger ml-5" type="submit">Удалить</button></td>
                                 </form>
-                                <a href="/playLists/${playList.id}">${playList.name}</a>
+
                             </td>
                         </tr>
                     <#else>
@@ -23,18 +24,17 @@
                     </#list>
                 </table>
                 <div>
-                    <form method="post" action="/addPlayList" enctype="multipart/form-data">
+                    <b>Добавить плэйлист</b>
+                    <form method="post" action="/addPlayList" enctype="multipart/form-data" class = "my-3">
                         <input name="name" type="text" value="${(name)!""}">
-                        <span>${(message)!""}</span>
                         <input name="isPrivate" type="checkbox"> сделать приватным
-                        <br>
-                        <button type="submit" class="my-1">Добавить</button>
-                        </br>
+                        <br><button type="submit" class="btn btn-outline-primary my-2">Добавить</button>
+                        </br><span>${(message)!""}</span>
                     </form>
                 </div>
             </div>
 
-            <div class="col-sm">
+            <div class = "col-sm mx-5">
                 <h3 class="my-3">
                     Пользователь
                 </h3>

@@ -4,8 +4,8 @@
     <div class = "container">
         <div class = "my-3">
 
-            <table class = "table">
-                <thead>
+            <table class = "table table-borderless">
+                <thead >
                 <!-- <tr>
                     <td>Name</td>
                     <td>Tags</td>
