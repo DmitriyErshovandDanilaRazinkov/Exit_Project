@@ -1,10 +1,12 @@
 package com.controller;
 
+import com.exceptions.DontHaveRightsException;
 import com.model.DTO.PlayListTo;
 import com.model.DTO.pages.playList.PlayListListUserTO;
 import com.model.DTO.pages.playList.PlayListPageTo;
 import com.model.DTO.pages.playList.PlayListUsersTO;
-import com.model.Role_PlayList;
+import com.model.User;
+import com.model.enums.Role_PlayList;
 import com.service.PlayListService;
 import com.service.RoleInPlayListsService;
 import com.service.UserService;
@@ -20,7 +22,7 @@ import javax.annotation.security.RolesAllowed;
 
 @AllArgsConstructor
 @Controller
-@RolesAllowed({"USER", "ADMIN"})
+@RolesAllowed({User.ROLE_USER, User.ROLE_ADMIN})
 public class PlayListContentController {
 
     private UserService userService;
@@ -36,8 +38,7 @@ public class PlayListContentController {
 
         if (nowPlayList.isPrivate() &&
                 !userService.checkUserRights(nowPlayList.getId(), Role_PlayList.ROLE_NONE)) {
-            model.addAttribute("exceptionText", "У Вас не доступа к этому плейлисту");
-            return "exception";
+            throw new DontHaveRightsException("У Вас не доступа к этому плейлисту");
         }
 
         PlayListPageTo pageTo = new PlayListPageTo();
@@ -54,15 +55,13 @@ public class PlayListContentController {
     @PostMapping("/playLists/{id}/deleteAudio")
     public String deleteAudio(@PathVariable Long id,
                               @RequestParam(defaultValue = "") Long audioId,
-                              @RequestParam(defaultValue = "") String action,
-                              Model model) {
+                              @RequestParam(defaultValue = "") String action) {
         if (action.equals("delete")) {
             playListService.deleteAudioFromPlayList(id, audioId);
         }
 
         if (!userService.checkUserRights(id, Role_PlayList.ROLE_OWNER)) {
-            model.addAttribute("exceptionText", "У Вас не доступа к этой операции");
-            return "exception";
+            throw new DontHaveRightsException("У Вас не доступа к этой операции");
         }
 
         return "redirect:/playLists/{id}";
@@ -75,8 +74,7 @@ public class PlayListContentController {
         PlayListTo nowPlayList = playListService.findPlayListToById(id);
 
         if (!userService.checkUserRights(id, Role_PlayList.ROLE_USER)) {
-            model.addAttribute("exceptionText", "У Вас не доступа к этому плейлисту");
-            return "exception";
+            throw new DontHaveRightsException("У Вас не доступа кэтому плейлисту");
         }
 
         PlayListListUserTO pageTo = new PlayListListUserTO();
@@ -94,19 +92,17 @@ public class PlayListContentController {
 
 
     @PostMapping("/playLists/{id}/deleteUser")
-    public String deleteUserFromList(@PathVariable Long id, @RequestParam("userId") Long userId, Model model) {
+    public String deleteUserFromList(@PathVariable Long id, @RequestParam("userId") Long userId) {
 
 
         if (!userService.checkUserRights(id, Role_PlayList.ROLE_ADMIN)) {
-            model.addAttribute("exceptionText", "У Вас не доступа к этой операции");
-            return "exception";
+            throw new DontHaveRightsException("У Вас не доступа к этой операции");
         }
 
         if (roleInPlayListsService.getToUserRoleInPlayList(userId, id).getPlayListRole().compare(Role_PlayList.ROLE_ADMIN) &&
                 roleInPlayListsService.getToUserRoleInPlayList(UserService.getCurrentUser().getId(), id)
                         .getPlayListRole().compare(Role_PlayList.ROLE_OWNER)) {
-            model.addAttribute("exceptionText", "Админ не может удалить админа");
-            return "exception";
+            throw new DontHaveRightsException("Админ не может удалить админа");
         }
 
         playListService.deleteUser(id, userId);
@@ -118,8 +114,7 @@ public class PlayListContentController {
     public String getAdminPage(@PathVariable Long id, Model model) {
 
         if (!userService.checkUserRights(id, Role_PlayList.ROLE_OWNER)) {
-            model.addAttribute("exceptionText", "У Вас не доступа к этой операции");
-            return "exception";
+            throw new DontHaveRightsException("У Вас не доступа к этой операции");
         }
 
         PlayListUsersTO pageTo = new PlayListUsersTO();
@@ -133,11 +128,10 @@ public class PlayListContentController {
     }
 
     @PostMapping("/playLists/{id}/addAdmin")
-    public String addAdmin(@PathVariable Long id, @RequestParam Long userId, Model model) {
+    public String addAdmin(@PathVariable Long id, @RequestParam Long userId) {
 
         if (!userService.checkUserRights(id, Role_PlayList.ROLE_OWNER)) {
-            model.addAttribute("exceptionText", "У Вас не доступа к этой операции");
-            return "exception";
+            throw new DontHaveRightsException("У Вас не доступа к этой операции");
         }
 
         playListService.changeUserRoleTo(id, userId, Role_PlayList.ROLE_ADMIN);
@@ -146,11 +140,10 @@ public class PlayListContentController {
     }
 
     @PostMapping("/playLists/{id}/deleteAdmin")
-    public String deleteAdmin(@PathVariable Long id, @RequestParam Long userId, Model model) {
+    public String deleteAdmin(@PathVariable Long id, @RequestParam Long userId) {
 
         if (!userService.checkUserRights(id, Role_PlayList.ROLE_OWNER)) {
-            model.addAttribute("exceptionText", "У Вас не доступа к этой операции");
-            return "exception";
+            throw new DontHaveRightsException("У Вас не доступа к этой операции");
         }
 
         playListService.changeUserRoleTo(id, userId, Role_PlayList.ROLE_USER);
@@ -162,8 +155,7 @@ public class PlayListContentController {
     public String getModeratorPage(@PathVariable Long id, Model model) {
 
         if (!userService.checkUserRights(id, Role_PlayList.ROLE_ADMIN)) {
-            model.addAttribute("exceptionText", "У Вас не доступа к этой операции");
-            return "exception";
+            throw new DontHaveRightsException("У Вас не доступа к этой операции");
         }
         PlayListUsersTO pageTo = new PlayListUsersTO();
 
@@ -176,11 +168,10 @@ public class PlayListContentController {
     }
 
     @PostMapping("/playLists/{id}/addModerator")
-    public String addModerator(@PathVariable Long id, @RequestParam Long userId, Model model) {
+    public String addModerator(@PathVariable Long id, @RequestParam Long userId) {
 
         if (!userService.checkUserRights(id, Role_PlayList.ROLE_ADMIN)) {
-            model.addAttribute("exceptionText", "У Вас не доступа к этой операции");
-            return "exception";
+            throw new DontHaveRightsException("У Вас не доступа к этой операции");
         }
 
         playListService.changeUserRoleTo(id, userId, Role_PlayList.ROLE_MODERATOR);
@@ -189,11 +180,10 @@ public class PlayListContentController {
     }
 
     @PostMapping("/playLists/{id}/deleteModerator")
-    public String deleteModerator(@PathVariable Long id, @RequestParam Long userId, Model model) {
+    public String deleteModerator(@PathVariable Long id, @RequestParam Long userId) {
 
         if (!userService.checkUserRights(id, Role_PlayList.ROLE_ADMIN)) {
-            model.addAttribute("exceptionText", "У Вас не доступа к этой операции");
-            return "exception";
+            throw new DontHaveRightsException("У Вас не доступа к этой операции");
         }
 
         playListService.changeUserRoleTo(id, userId, Role_PlayList.ROLE_USER);

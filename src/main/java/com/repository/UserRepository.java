@@ -1,7 +1,5 @@
 package com.repository;
 
-import com.model.PlayList;
-import com.model.Role_PlayList;
 import com.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

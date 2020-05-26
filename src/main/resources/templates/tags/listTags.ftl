@@ -6,12 +6,14 @@
         <tr>
             <td>ID</td>
             <td>Name</td>
+            <td>CountListen</td>
         </tr>
         </thead>
         <#list tags as tag>
             <tr>
                 <td><b>${tag.id}</b></td>
                 <td><span>${tag.name}</span></td>
+                <td>${tag.countListen}</td>
                 <td>
                     <form action="/admin/deleteTag" method="post">
                         <input type="hidden" name="tagId" value="${tag.id}"/>

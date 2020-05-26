@@ -21,6 +21,9 @@ public class Tag {
     private String name;
 
     @ApiModelProperty
+    private Long countListen = 0L;
+
+    @ApiModelProperty
     @Transient
     @ManyToMany(mappedBy = "tags")
     @JsonIgnoreProperties("tag")

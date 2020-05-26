@@ -2,6 +2,8 @@ package com.model.DTO;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class AudioTo {
 
@@ -11,5 +13,9 @@ public class AudioTo {
 
     private boolean premium;
 
+    private Long countListen;
+
     private FileTo file;
+
+    private List<TagTo> tags;
 }

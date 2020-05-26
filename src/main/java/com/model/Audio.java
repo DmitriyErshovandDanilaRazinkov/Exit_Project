@@ -26,6 +26,9 @@ public class Audio {
     private boolean premium;
 
     @ApiModelProperty
+    private Long countListen = 0L;
+
+    @ApiModelProperty
     @OneToOne(fetch = FetchType.LAZY)
     private FileAud file;
 
@@ -42,9 +45,10 @@ public class Audio {
     public Audio() {
     }
 
-    public Audio(String name, FileAud file) {
+    public Audio(String name, boolean isPremium, FileAud file) {
         this.name = name;
         this.file = file;
+        this.premium = isPremium;
         tags = new HashSet<>();
     }
 

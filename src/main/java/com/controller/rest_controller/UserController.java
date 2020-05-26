@@ -1,4 +1,4 @@
-package com.controller;
+package com.controller.rest_controller;
 
 import com.model.DTO.UserDetailsTo;
 import com.service.UserService;

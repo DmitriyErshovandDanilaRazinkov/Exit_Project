@@ -5,11 +5,13 @@ import com.exceptions.NotFoundDataBaseException;
 import com.model.*;
 import com.model.DTO.UserDetailsTo;
 import com.model.DTO.UserFormTO;
+import com.model.enums.Role_PlayList;
 import com.repository.UserRepository;
 
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import org.springframework.stereotype.Service;
@@ -34,11 +36,11 @@ public class UserService implements UserDetailsService {
 
 
     @Override
-    public UserDetailsTo loadUserByUsername(String username) {
+    public UserDetailsTo loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username);
 
         if (user == null) {
-            throw new NotFoundDataBaseException("User not found");
+            throw new UsernameNotFoundException("User not found");
         }
 
         return userToUserDetailsTo(user);
@@ -81,6 +83,12 @@ public class UserService implements UserDetailsService {
         userRepository.deleteById(userId);
     }
 
+    public void addToAdmin(Long id) {
+        User nowUser = findUserById(id);
+        nowUser.setRole(User.ROLE_ADMIN);
+        saveUser(nowUser);
+    }
+
     public boolean checkUserRights(Long playListId, Role_PlayList role) {
         return roleInPlayListsService.getUserRoleInPlayList(getCurrentUser().getId(), playListId).getPlayListRole().compare(role);
     }
@@ -97,11 +105,10 @@ public class UserService implements UserDetailsService {
             nowUser.setEndPremium(new Date());
         }
 
-        Date date = nowUser.getEndPremium();
+        Date date = new Date(nowUser.getEndPremium().getTime() + period * 1000L);
 
         nowUser.setCash(nowUser.getCash() - cost);
         nowUser.setPremium(true);
-        date.setTime(date.getTime() + period * 1000);
         nowUser.setEndPremium(date);
 
         saveUser(nowUser);
@@ -137,4 +144,5 @@ public class UserService implements UserDetailsService {
         userTo.setPremium(user.isPremium());
         return userTo;
     }
+
 }

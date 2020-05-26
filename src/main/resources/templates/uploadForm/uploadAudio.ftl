@@ -5,6 +5,7 @@
     <form method="post" enctype="multipart/form-data">
         <div>
             <input type="text" name="name">
+            <input name="isPremium" type="checkbox">
         </div>
         <div>
             <input type="file" name="file">

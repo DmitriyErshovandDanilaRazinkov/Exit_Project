@@ -30,6 +30,8 @@ public class RegistrationController extends BaseController {
                           Model model) {
 
         if (bindingResult.hasErrors()) {
+            userForm.setPassword("");
+            userForm.setConfirmPassword("");
             redirectAttributes.addFlashAttribute("userForm", userForm);
             addValidationMessage(redirectAttributes, bindingResult);
             return "redirect:/registration";

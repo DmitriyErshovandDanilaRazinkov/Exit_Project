@@ -14,16 +14,16 @@
 
                 <#list listAudio as audio>
                     <tr>
-                        <td><a href="/user/audioPage/${audio.id}"><span>${audio.name}</span> </td>
+                        <td><a href="/user/audioPage/${audio.id}"><span>${audio.name}</span></a></td>
                         <td><#list audio.tags as tag>${tag.name};</#list></td>
                         <td>
                             <a href="/audio/addInPlayList/${audio.id}">Add in PlayList</a>
                         </td>
                     </tr>
-                    <#else>
-                        <div>
-                            У вас пока нет аудиозаписей, добавьте их
-                        </div>
+                <#else>
+                    <div>
+                        У вас пока нет аудиозаписей, добавьте их
+                    </div>
                 </#list>
             </table>
         </div>

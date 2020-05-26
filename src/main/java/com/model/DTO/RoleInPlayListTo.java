@@ -1,6 +1,6 @@
 package com.model.DTO;
 
-import com.model.Role_PlayList;
+import com.model.enums.Role_PlayList;
 import lombok.Data;
 
 @Data

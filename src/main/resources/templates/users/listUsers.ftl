@@ -7,7 +7,6 @@
         <tr>
             <td>ID</td>
             <td>UserName</td>
-            <td>Password</td>
             <td>Roles</td>
         </tr>
         </thead>
@@ -15,15 +14,17 @@
             <tr>
                 <td>${user.id}</td>
                 <td>${user.username}</td>
-                <td>${user.password}</td>
-                <td>
-                    <#list user.roles as role> ${role.name}; </#list>
-                </td>
+                <td>${user.role}</td>
                 <td>
                     <form action="/admin/deleteUser" method="post">
                         <input type="hidden" name="userId" value="${user.id}"/>
-                        <input type="hidden" name="action" value="delete"/>
                         <button type="submit">Delete</button>
+                    </form>
+                </td>
+                <td>
+                    <form action="/admin/addToAdmin" method="post">
+                        <input type="hidden" name="userId" value="${user.id}"/>
+                        <button type="submit">AppToAdmin</button>
                     </form>
                 </td>
             </tr>

@@ -51,10 +51,10 @@ public class AudioService {
         repository.deleteById(id);
     }
 
-    public void uploadAudio(String name, MultipartFile file) throws IOException {
+    public void uploadAudio(String name, boolean isPremium, MultipartFile file) throws IOException {
         if (Objects.requireNonNull(file.getContentType()).contains("audio")) {
             FileAud newFile = fileService.uploadFile(file);
-            Audio newAudio = new Audio(name, newFile);
+            Audio newAudio = new Audio(name, isPremium, newFile);
             repository.save(newAudio);
         }
     }
@@ -65,12 +65,23 @@ public class AudioService {
         repository.save(audio);
     }
 
+    public void audioIsListen(Long fileId) {
+        Audio audio = repository.findAudioByFile_Id(fileId);
+        audio.setCountListen(audio.getCountListen() + 1);
+        tagService.tagsIsListen(audio.getTags());
+        saveAudio(audio);
+    }
+
     public static AudioTo audioToAudioTo(Audio audio) {
         AudioTo audioTo = new AudioTo();
         audioTo.setId(audio.getId());
         audioTo.setName(audio.getName());
+        audioTo.setCountListen(audio.getCountListen());
         audioTo.setFile(FileService.fileToFileTo(audio.getFile()));
         audioTo.setPremium(audio.isPremium());
+        audioTo.setTags(audio.getTags().stream()
+                .map(TagService::tagToTagTo)
+                .collect(Collectors.toList()));
         return audioTo;
     }
 }

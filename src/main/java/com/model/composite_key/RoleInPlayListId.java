@@ -1,6 +1,8 @@
-package com.model;
+package com.model.composite_key;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.model.PlayList;
+import com.model.User;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 

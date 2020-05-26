@@ -1,20 +1,20 @@
 package com.controller;
 
-import com.model.Audio;
+import com.exceptions.DontHaveRightsException;
 import com.model.DTO.AudioTo;
 import com.model.DTO.pages.user.UserPageTo;
 import com.model.DTO.pages.user.UserPageToAddPlaylist;
-import com.model.Role_PlayList;
 import com.model.User;
+import com.model.enums.Role_PlayList;
 import com.service.AudioService;
 import com.service.PlayListService;
 import com.service.UserService;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -22,7 +22,7 @@ import javax.annotation.security.RolesAllowed;
 @AllArgsConstructor
 @Api
 @Controller
-@RolesAllowed({"USER", "ADMIN"})
+@RolesAllowed({User.ROLE_USER, User.ROLE_ADMIN})
 public class UserContentController {
 
     private UserService userService;
@@ -35,7 +35,7 @@ public class UserContentController {
     public String getUserPage(Model model) {
         UserPageTo pageTo = new UserPageTo();
 
-        pageTo.setUser(UserService.getCurrentUser());
+        pageTo.setUser(userService.findUserToById(UserService.getCurrentUser().getId()));
         pageTo.setPlayLists(playListService.getPlayListsByUser(pageTo.getUser().getId()));
         model.addAttribute("pageTo", pageTo);
 
@@ -45,8 +45,23 @@ public class UserContentController {
     @PostMapping("/addPlayList")
     public String createNewPlayList(@RequestParam String name,
                                     @RequestParam(defaultValue = "false") boolean isPrivate,
-                                    Model model) {
+                                    RedirectAttributes redirectAttributes) {
+        if (name.length() < 3) {
+            redirectAttributes.addFlashAttribute("name", name);
+            redirectAttributes.addFlashAttribute("message", "Слишком короткое название");
+        }
         playListService.addPlayList(UserService.getCurrentUser().getId(), name, isPrivate);
+        redirectAttributes.addFlashAttribute("message", "Плейлист добавлен");
+
+        return "redirect:/user";
+    }
+
+    @PostMapping("/deletePlayList")
+    public String deletePlayList(@RequestParam Long playListId) {
+        if (!userService.checkUserRights(playListId, Role_PlayList.ROLE_OWNER)) {
+            throw new DontHaveRightsException("Вы не можете удалить этот плейлист");
+        }
+        playListService.deletePlayList(playListId);
         return "redirect:/user";
     }
 
@@ -64,9 +79,6 @@ public class UserContentController {
         UserPageToAddPlaylist userPageToAddPlaylist = new UserPageToAddPlaylist();
         userPageToAddPlaylist.setPlayLists(playListService.getPlayListsByUser(UserService.getCurrentUser().getId()));
         userPageToAddPlaylist.setResult("");
-
-        //model.addAttribute("playLists", playListService.getPlayListsByUser(UserService.getCurrentUser().getId()));
-        //model.addAttribute("result", "");
 
         model.addAttribute("userPageTo", userPageToAddPlaylist);
 
@@ -87,9 +99,6 @@ public class UserContentController {
 
         userPageToAddPlaylist.setPlayLists(playListService.getPlayListsByUser(UserService.getCurrentUser().getId()));
         userPageToAddPlaylist.setResult("Аудио добавлено");
-
-        //model.addAttribute("playLists", playListService.getPlayListsByUser(UserService.getCurrentUser().getId()));
-        //model.addAttribute("result", "Аудио добавлено");
 
         model.addAttribute("userPageTo",userPageToAddPlaylist);
 
@@ -119,7 +128,6 @@ public class UserContentController {
 
     @PostMapping("/store/premium")
     public String buyPremium(Model model) {
-
 
         if (userService.buyPremium(UserService.getCurrentUser().getId(), 3600L * 24L * 10L, 30)) {
             model.addAttribute("message", "Премиум куплен");

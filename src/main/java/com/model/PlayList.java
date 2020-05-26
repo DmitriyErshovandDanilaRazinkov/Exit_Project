@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -37,7 +36,7 @@ public class PlayList {
     private List<Audio> listAudio = new ArrayList<>();
 
     @ApiModelProperty
-    @OneToMany(mappedBy = "idComp.playList", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "idComp.playList", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonIgnoreProperties("playList")
     private Set<RoleInPlayList> roleInPlayLists = new HashSet<>();
 
@@ -47,10 +46,6 @@ public class PlayList {
     public PlayList(String name, boolean isPrivate) {
         this.isPrivate = isPrivate;
         this.name = name;
-    }
-
-    public boolean equals(PlayList playList) {
-        return id.equals(playList.getId());
     }
 
     public int hashCode() {

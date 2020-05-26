@@ -2,8 +2,8 @@ package com.repository;
 
 
 import com.model.RoleInPlayList;
-import com.model.RoleInPlayListId;
-import com.model.Role_PlayList;
+import com.model.composite_key.RoleInPlayListId;
+import com.model.enums.Role_PlayList;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

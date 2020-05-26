@@ -45,13 +45,12 @@
                         <a class="nav-link" href="/audio">Audio</a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="/store" id="navbarDropdownMenuLink" role="button"
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Store
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <a class="dropdown-item" href="/store/premium">Premium</a>
-                            <a class="dropdown-item" href="/store/playLists">PlayLists</a>
                         </div>
                     </li>
                 </ul>

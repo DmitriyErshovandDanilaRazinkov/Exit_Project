@@ -23,12 +23,9 @@
             Добавить тэг
         </h2>
         <#list tagList as tag>
-            <#if !audio.checkTag(tag)>
                 <a href="/admin/audios/${audio.id}/${tag.id}">
                     ${tag.name}
                 </a>
-            </#if>
-        <#else>
         </#list>
     </div>
 </@common.page>

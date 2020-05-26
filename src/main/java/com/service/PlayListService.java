@@ -3,8 +3,11 @@ package com.service;
 import com.exceptions.DontHaveRightsException;
 import com.exceptions.NotFoundDataBaseException;
 import com.model.*;
+import com.model.DTO.AudioTo;
 import com.model.DTO.PlayListTo;
 import com.model.DTO.RoleInPlayListTo;
+import com.model.composite_key.RoleInPlayListId;
+import com.model.enums.Role_PlayList;
 import com.repository.PlayListRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -122,7 +125,13 @@ public class PlayListService {
     }
 
     public void deleteUser(Long playListId, Long userId) {
-        roleInPlayListsService.deleteRole(roleInPlayListsService.getUserRoleInPlayList(userId, playListId));
+        RoleInPlayList role = roleInPlayListsService.getUserRoleInPlayList(userId, playListId);
+
+        if (role.getPlayListRole() == Role_PlayList.ROLE_OWNER) {
+            throw new DontHaveRightsException("Никто не может удалить владельца");
+        }
+
+        roleInPlayListsService.deleteRole(role);
     }
 
     public void deletePlayList(Long id) {
@@ -146,8 +155,10 @@ public class PlayListService {
         roleInPlayListsService.saveRole(role);
     }
 
-    public List<PlayList> getPlayListsByUser(Long id) {
-        return repository.getAllByWithPlayList(id);
+    public List<PlayListTo> getPlayListsByUser(Long id) {
+        return repository.getAllByWithPlayList(id).stream()
+                .map(PlayListService::playListToPlayListTo)
+                .collect(Collectors.toList());
     }
 
     public static PlayListTo playListToPlayListTo(PlayList playList) {
@@ -159,7 +170,9 @@ public class PlayListService {
         return playListTo;
     }
 
-    public List<Audio> getPlayListAudios(Long id) {
-        return findPlayListById(id).getListAudio();
+    public List<AudioTo> getPlayListAudios(Long id) {
+        return findPlayListById(id).getListAudio().stream()
+                .map(AudioService::audioToAudioTo)
+                .collect(Collectors.toList());
     }
 }

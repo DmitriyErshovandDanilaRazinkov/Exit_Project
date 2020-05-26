@@ -8,5 +8,7 @@ public class TagTo {
 
     private Long id;
 
+    private Long countListen;
+
     private String name;
 }

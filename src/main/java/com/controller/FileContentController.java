@@ -1,6 +1,7 @@
 package com.controller;
 
 import com.model.FileAud;
+import com.model.User;
 import com.service.AudioService;
 import com.service.FileService;
 import io.swagger.annotations.Api;
@@ -22,7 +23,7 @@ import java.nio.file.Files;
 
 @Api
 @Controller
-@RolesAllowed({"USER", "ADMIN"})
+@RolesAllowed({User.ROLE_USER, User.ROLE_ADMIN})
 public class FileContentController {
 
     @Value("${upload.path}")
@@ -45,6 +46,8 @@ public class FileContentController {
         String fileName = fileService.findFileToById(fileId).getName();
         File file = new File(uploadPath + '/' + fileName);
 
+        audioService.audioIsListen(fileId);
+
         response.setHeader("Content-Type", servletContext.getMimeType(removeExtension(fileName)));
         response.setHeader("Content-Length", String.valueOf(file.length()));
         response.setHeader("Content-Disposition", "inline; fileName=\"" + uploadPath + "/" + fileName);
@@ -58,8 +61,9 @@ public class FileContentController {
 
     @PostMapping("/upload/audio")
     public String uploadAudio(@RequestParam String name,
+                              @RequestParam(defaultValue = "false") boolean isPremium,
                               @RequestParam("file") MultipartFile file, Model model) throws IOException {
-        audioService.uploadAudio(name, file);
+        audioService.uploadAudio(name, isPremium, file);
         model.addAttribute("result", "File upload");
         return "uploadForm/uploadResult";
     }

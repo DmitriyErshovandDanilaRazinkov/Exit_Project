@@ -1,5 +1,7 @@
-package com.model;
+package com.model.enums;
 
+
+import com.model.RoleInPlayList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,19 +35,6 @@ public enum Role_PlayList {
         return name;
     }
 
-
-    static public List<Role_PlayList> getAll() {
-        ArrayList<Role_PlayList> list = new ArrayList<>();
-        list.add(ROLE_OWNER);
-        list.add(ROLE_ADMIN);
-        list.add(ROLE_MODERATOR);
-        list.add(ROLE_USER);
-        return list;
-    }
-
-    public static int compareTo(RoleInPlayList role1, RoleInPlayList role2) {
-        return role1.getPlayListRole().compare(role2.getPlayListRole()) ? -1 : 1;
-    }
 
     public boolean compareUnder(Role_PlayList role) {
         return this.id <= role.getId();

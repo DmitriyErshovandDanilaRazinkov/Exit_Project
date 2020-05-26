@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -42,7 +43,15 @@ public class TagService {
     public static TagTo tagToTagTo(Tag tag) {
         TagTo tagTo = new TagTo();
         tagTo.setId(tag.getId());
+        tagTo.setCountListen(tag.getCountListen());
         tagTo.setName(tag.getName());
         return tagTo;
+    }
+
+    public void tagsIsListen(Set<Tag> tags) {
+        tags.stream().forEach((tag) -> {
+            tag.setCountListen(tag.getCountListen() + 1);
+            repository.save(tag);
+        });
     }
 }

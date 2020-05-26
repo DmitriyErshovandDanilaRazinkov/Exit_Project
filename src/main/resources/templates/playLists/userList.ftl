@@ -10,10 +10,6 @@
     </div>
 
     <#if (pageTo.nowUserRole >=3) >
-        <form action="/playLists/${pageTo.playListId}/addUser" method="post" enctype="multipart/form-data">
-            <input type="number" name="userId">
-            <button type="submit">Добавить</button>
-        </form>
         <#if (pageTo.nowUserRole == 4) >
             <div><a href="/playLists/${pageTo.playListId}/changeOwner">Поменять владельца</a></div>
         </#if>

@@ -2,21 +2,26 @@ package com.controller;
 
 import com.exceptions.DontHaveRightsException;
 import com.exceptions.NotFoundDataBaseException;
+import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
 public class ExceptionHandlerController {
 
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(DontHaveRightsException.class)
-    public String notFoundExceptionHandler(Model model, DontHaveRightsException ex) {
+    public String dontHaveRightsException(Model model, DontHaveRightsException ex) {
 
         model.addAttribute("exceptionText", ex.getMessage());
 
         return "exception";
     }
 
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NotFoundDataBaseException.class)
     public String notFoundExceptionHandler(Model model, NotFoundDataBaseException ex) {
 
@@ -25,6 +30,7 @@ public class ExceptionHandlerController {
         return "exception";
     }
 
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(java.lang.NullPointerException.class)
     public String Exception(Model model, NullPointerException ex) {
 
@@ -32,6 +38,4 @@ public class ExceptionHandlerController {
 
         return "exception";
     }
-
-
 }

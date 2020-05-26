@@ -1,12 +1,12 @@
 package com.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.model.composite_key.RoleInPlayListId;
+import com.model.enums.Role_PlayList;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.io.Serializable;
 
 @ApiModel
 @Data
