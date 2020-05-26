@@ -7,15 +7,15 @@
                 <h3 class = "my-3">
                     Плейлисты
                 </h3>
-                <table>
+                <table class="table table-borderless">
                     <#list pageTo.playLists as playList>
                         <tr>
                             <td>
                                 <form action="/deletePlayList" method="post">
-                                    <a href="/playLists/${playList.id}">${playList.name}</a>
                                     <input type="hidden" name="playListId" value="${playList.id}">
                                     <button class="btn btn-outline-danger ml-5" type="submit">Удалить</button>
                                 </form>
+                                <a href="/playLists/${playList.id}">${playList.name}</a>
                             </td>
                         </tr>
                     <#else>

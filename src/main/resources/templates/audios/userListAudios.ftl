@@ -4,12 +4,15 @@
     <div class = "container">
         <div class = "my-3">
 
-            <table>
+            <table class = "table">
                 <thead>
-                <tr>
+                <!-- <tr>
                     <td>Name</td>
                     <td>Tags</td>
                 </tr>
+                -->
+                <th scope="col">Name</th>
+                <th scope="col">Tags</th>
                 </thead>
 
                 <#list listAudio as audio>

@@ -33,4 +33,8 @@ public class RoleInPlayListId implements Serializable {
         this.user = user;
         this.playList = playList;
     }
+
+    public int hashCode () {
+        return Long.hashCode(user.hashCode() +  playList.hashCode());
+    }
 }

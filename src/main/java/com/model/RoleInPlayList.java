@@ -2,6 +2,7 @@ package com.model;
 
 import com.model.composite_key.RoleInPlayListId;
 import com.model.enums.Role_PlayList;
+import com.sun.org.apache.xpath.internal.objects.XString;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -28,4 +29,7 @@ public class RoleInPlayList {
         this.idComp = roleInPlayListId;
     }
 
+    public String toString() {
+        return idComp.hashCode() + "";
+    }
 }

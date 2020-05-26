@@ -56,12 +56,13 @@ public class PlayListContentController {
     public String deleteAudio(@PathVariable Long id,
                               @RequestParam(defaultValue = "") Long audioId,
                               @RequestParam(defaultValue = "") String action) {
-        if (action.equals("delete")) {
-            playListService.deleteAudioFromPlayList(id, audioId);
+
+        if (!userService.checkUserRights(id, Role_PlayList.ROLE_MODERATOR)) {
+            throw new DontHaveRightsException("У Вас не доступа к этой операции");
         }
 
-        if (!userService.checkUserRights(id, Role_PlayList.ROLE_OWNER)) {
-            throw new DontHaveRightsException("У Вас не доступа к этой операции");
+        if (action.equals("delete")) {
+            playListService.deleteAudioFromPlayList(id, audioId);
         }
 
         return "redirect:/playLists/{id}";
@@ -211,7 +212,7 @@ public class PlayListContentController {
 
     @GetMapping("/playLists/join/{joinCode}")
     public String joinInPlayList(@PathVariable("joinCode") String joinCode, Model model) {
-
-        return getUserPlayList(playListService.joinUser(joinCode, UserService.getCurrentUser().getId()), model);
+        playListService.joinUser(joinCode, UserService.getCurrentUser().getId());
+        return "redirect:/user" ;
     }
 }

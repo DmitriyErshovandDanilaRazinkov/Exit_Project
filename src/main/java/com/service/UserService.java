@@ -43,7 +43,10 @@ public class UserService implements UserDetailsService {
             throw new UsernameNotFoundException("User not found");
         }
 
-        return userToUserDetailsTo(user);
+        UserDetailsTo detailsTo = userToUserDetailsTo(user);
+        saveUser(user);
+
+        return detailsTo;
     }
 
     public UserDetailsTo findUserToById(Long id) {

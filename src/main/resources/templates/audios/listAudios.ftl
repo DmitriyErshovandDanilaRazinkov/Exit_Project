@@ -2,7 +2,7 @@
 
 <@common.page>
 
-    <table>
+    <table class="table table-borderless">
         <thead>
         <tr>
             <td>Id</td>
@@ -12,7 +12,7 @@
             <td>File_Id</td>
         </tr>
         </thead>
-        <#list audios as audio>
+        <#list audios as audio>audio.
             <tr>
                 <td><b><a href="/admin/audio/${audio.id}">${audio.id}</a></b></td>
                 <td><span>${audio.name}</span></td>

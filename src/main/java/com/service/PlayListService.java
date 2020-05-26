@@ -76,8 +76,13 @@ public class PlayListService {
     }
 
     public void deleteAudioFromPlayList(long id, long audioId) {
-        repository.findById(id).orElseThrow(() -> new NotFoundDataBaseException("ПлейЛист не найден"))
-                .getListAudio().remove(audioService.findAudioById(audioId));
+
+        PlayList playList =  repository.findById(id).orElseThrow(() -> new NotFoundDataBaseException("ПлейЛист не найден"));
+        Audio audio = audioService.findAudioById(audioId);
+        playList.getListAudio().remove(audio);
+        audio.getPlayLists().remove(playList);
+        repository.save(playList);
+        audioService.saveAudio(audio);
     }
 
     public List<PlayListTo> getAll() {
@@ -114,7 +119,7 @@ public class PlayListService {
         roleInPlayListsService.saveRole(role);
     }
 
-    public Long joinUser(String joinCode, Long userId) {
+    public Long  joinUser(String joinCode, Long userId) {
         PlayList playList = repository.findByJoinCode(joinCode);
         if (roleInPlayListsService.getUserRoleInPlayList(userId, playList.getId())
                 .getPlayListRole().compareUnder(Role_PlayList.ROLE_NONE)) {
