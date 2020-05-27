@@ -12,7 +12,7 @@
                             <option value="${tag.id}">${tag.name}</option>
                         </#list>
                     </select>
-                    <button class="btn btn-outline-primary flex">Найти</button>
+                    <button class="btn btn-outline-primary flex my-2">Найти</button>
                 </div>
             </form>
 
@@ -20,17 +20,12 @@
             <form class="mb-5" action="/audioByName" method="post">
                 <div class="input-group input-group-prepend">
                     <input class="form-control w-25" type="text" name="audioName" placeholder="Название аудио">
-                    <button class="btn btn-outline-primary">Найти</button>
+                    <button class="btn btn-outline-primary mx-3">Найти</button>
                 </div>
             </form>
 
             <table class="table table-borderless">
                 <thead>
-                <!-- <tr>
-                    <td>Name</td>
-                    <td>Tags</td>
-                </tr>
-                -->
                 <th scope="col">Name</th>
                 <th scope="col">Tags</th>
                 <th scope="col">Прослушали</th>
@@ -49,6 +44,9 @@
                 <#else>
                     <div>
                         Такой аудиозаписи не нашлось
+                        <div>
+                            <a href="/audio">Вернутья к списку</a>
+                        </div>
                     </div>
                 </#list>
             </table>

@@ -7,7 +7,7 @@
                 <div class="col-sm">
                     <div>
                         <form action="/store/addCash" method="post" enctype="multipart/form-data">
-                            <button type="submit">Пополнить счет</button>
+                            <button class="btn btn-info btn-lg" type="submit">Пополнить счет</button>
                         </form>
                     </div>
                     <div class="green">
@@ -17,7 +17,7 @@
                 <div class="col-sm">
                     <div>
                         <form action="/store/premium" method="post" enctype="multipart/form-data">
-                            <button type="submit">Bye premium</button>
+                            <button class="btn btn-info btn-lg" type="submit">Bye premium</button>
                         </form>
                     </div>
                     <div class="red">
