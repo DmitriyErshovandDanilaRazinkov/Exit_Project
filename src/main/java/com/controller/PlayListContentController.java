@@ -37,7 +37,7 @@ public class PlayListContentController {
         PlayListTo nowPlayList = playListService.findPlayListToById(id);
 
         if (nowPlayList.isPrivate() &&
-                !userService.checkUserRights(nowPlayList.getId(), Role_PlayList.ROLE_NONE)) {
+                !userService.checkUserRights(nowPlayList.getId(), Role_PlayList.ROLE_USER)) {
             throw new DontHaveRightsException("У Вас не доступа к этому плейлисту");
         }
 

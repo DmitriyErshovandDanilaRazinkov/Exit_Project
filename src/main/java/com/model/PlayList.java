@@ -19,7 +19,7 @@ public class PlayList {
     private Long id;
 
     @ApiModelProperty
-    private boolean isPrivate;
+    private boolean isPrivate = false;
 
     @ApiModelProperty
     private String name;

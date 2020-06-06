@@ -17,7 +17,7 @@
                        value="${(userForm.confirmPassword)!""}">
                 <span class="alert-danger">${(validation_confirmPassword)!""}</span>
                 <span class="alert-danger">${(passwordsNotEquals)!""}</span></div>
-            <button type="submit" class="btn btn-success pt-1">Регистрация</button>
+            <button type="submit" class="btn btn btn-success btn-lg btn-block my-2">Регистрация</button>
         </form>
         <a href="/">Главная</a>
     </div>

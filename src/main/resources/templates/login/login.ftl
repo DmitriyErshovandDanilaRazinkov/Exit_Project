@@ -3,7 +3,7 @@
 <@common.page>
 
     <div>
-        <div class="w-25 mx-auto mb-3">
+        <div class="w-25 mx-auto my-3 mb-3">
             <h2 class="mx-auto">Вход в систему</h2>
             <form method="POST" action="/login">
                 <div>

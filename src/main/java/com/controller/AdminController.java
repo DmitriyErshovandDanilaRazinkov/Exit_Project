@@ -1,5 +1,6 @@
 package com.controller;
 
+import com.model.DTO.FileTo;
 import com.model.User;
 import com.service.*;
 import io.swagger.annotations.Api;
@@ -10,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
+import java.util.ArrayList;
 
 @AllArgsConstructor
 @Api
@@ -86,7 +88,10 @@ public class AdminController {
     @ApiOperation("Показывает файл по id")
     @GetMapping("/getFile/{fileId}")
     public String getFile(@PathVariable("fileId") Long fileId, Model model) {
-        model.addAttribute("files", fileService.findFileToById(fileId));
+        ArrayList<FileTo> arrayList = new ArrayList<>();
+        arrayList.add(fileService.findFileToById(fileId));
+
+        model.addAttribute("files",  arrayList);
         return "/files/listFiles1";
     }
 

@@ -18,7 +18,7 @@
                 <td><span>${audio.name}</span></td>
                 <td><#list audio.tags as tag>${tag.name};</#list></td>
                 <td>${audio.countListen}</td>
-                <td><span><a href="/admin/files/${audio.file.id}">${audio.file.id}</a></span></td>
+                <td><span><a href="/admin/getFile/${audio.file.id}">${audio.file.id}</a></span></td>
                 <td>
                     <form action="/admin/deleteAudio" enctype="multipart/form-data" method="post">
                         <input type="hidden" name="audioId" value="${audio.id}"/>

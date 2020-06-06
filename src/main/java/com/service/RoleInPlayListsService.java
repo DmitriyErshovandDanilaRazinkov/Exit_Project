@@ -1,10 +1,13 @@
 package com.service;
 
 import com.model.DTO.RoleInPlayListTo;
+import com.model.PlayList;
 import com.model.RoleInPlayList;
 import com.model.composite_key.RoleInPlayListId;
 import com.model.enums.Role_PlayList;
+import com.repository.PlayListRepository;
 import com.repository.RoleInPlayListRepository;
+import com.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.acls.model.NotFoundException;
 import org.springframework.stereotype.Service;
@@ -15,6 +18,9 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Service
 public class RoleInPlayListsService {
+    private UserRepository userRepository;
+
+    private PlayListRepository playListRepository;
 
     private RoleInPlayListRepository repository;
 
@@ -43,6 +49,7 @@ public class RoleInPlayListsService {
     RoleInPlayList getUserRoleInPlayList(Long userId, Long playListId) {
         return repository.findByUser_idAndPlayList_id(userId, playListId).orElseGet(() -> {
             RoleInPlayList role = new RoleInPlayList();
+            role.setIdComp(new RoleInPlayListId(userRepository.findById(userId).get(), playListRepository.findById(playListId).get()));
             role.setPlayListRole(Role_PlayList.ROLE_NONE);
             return role;
         });
