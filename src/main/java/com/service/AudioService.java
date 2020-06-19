@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
@@ -75,7 +76,7 @@ public class AudioService {
     }
 
     public void uploadAudio(String name, boolean isPremium, MultipartFile file) throws IOException {
-        if (Objects.requireNonNull(file.getContentType()).contains("audio")) {
+        if (Objects.requireNonNull(file.getContentType()).contains("audio") || Objects.requireNonNull(file.getContentType()).contains("video")) {
             FileAud newFile = fileService.uploadFile(file);
             Audio newAudio = new Audio(name, isPremium, newFile);
             repository.save(newAudio);

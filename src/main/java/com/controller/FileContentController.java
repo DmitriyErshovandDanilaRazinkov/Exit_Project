@@ -60,7 +60,7 @@ public class FileContentController {
     }
 
     @PostMapping("/upload/audio")
-    public String uploadAudio(@RequestParam String name,
+     public String uploadAudio(@RequestParam String name,
                               @RequestParam(defaultValue = "false") boolean isPremium,
                               @RequestParam("file") MultipartFile file, Model model) throws IOException {
         audioService.uploadAudio(name, isPremium, file);
